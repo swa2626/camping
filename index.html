@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>露營菜單</title>
+<title>露營菜單 🏕️</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -157,13 +157,25 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 </div>
 <div class="toast" id="toast"></div>
 <div class="divider">— ✦ —</div>
-<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">將此頁面加入書籤，下次開啟資料仍在</p>
+<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">將網址分享給夥伴，所有裝置即時同步 ✦</p>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <script>
+/* ══ Firebase 設定 ══ */
+const firebaseConfig = {
+  databaseURL: 'https://campfood-list-default-rtdb.asia-southeast1.firebasedatabase.app'
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const REF = db.ref('camping-menu-v1');
+
 const SK = 'camping-menu-v1';
 let state = { meta:{start:'',end:'',loc:'',ppl:''}, menu:[], prep:[] };
-let syncTimer = null, ctr = 100;
+let syncTimer = null, ctr = 100, isSaving = false, isRemoteUpdate = false;
 
 function uid(){ return 'x'+(++ctr)+Math.floor(Math.random()*9999); }
 
@@ -177,38 +189,59 @@ const defaultPrep = [
   {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
 ];
 
-/* ── localStorage 儲存（在真實瀏覽器完全正常）── */
+/* ── Firebase 讀取與即時同步 ── */
 function load(){
-  try{
-    const saved = localStorage.getItem(SK);
-    if(saved){
-      state = JSON.parse(saved);
-      setBadge('上次儲存：' + new Date(state._savedAt||Date.now()).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+  setBadge('連線中...');
+  REF.once('value').then(snap => {
+    const data = snap.val();
+    if(data){
+      state = data;
+      setBadge('✦ 雲端同步中');
     } else {
       state.menu = JSON.parse(JSON.stringify(defaultMenu));
       state.prep = JSON.parse(JSON.stringify(defaultPrep));
-      setBadge('尚未儲存');
+      setBadge('尚未有資料');
     }
-  }catch(e){
+    applyMeta(); renderMenu(); renderPrep();
+    startListening();
+  }).catch(()=>{
     state.menu = JSON.parse(JSON.stringify(defaultMenu));
     state.prep = JSON.parse(JSON.stringify(defaultPrep));
-    setBadge('');
-  }
-  applyMeta(); renderMenu(); renderPrep();
+    setBadge('⚠️ 無法連線，請確認網路');
+    applyMeta(); renderMenu(); renderPrep();
+  });
+}
+
+/* 監聽遠端變更（其他裝置更新時自動刷新） */
+function startListening(){
+  REF.on('value', snap => {
+    if(isSaving) return; // 自己在存，不要觸發
+    const data = snap.val();
+    if(!data) return;
+    state = data;
+    isRemoteUpdate = true;
+    applyMeta(); renderMenu(); renderPrep();
+    isRemoteUpdate = false;
+    setBadge('✦ 已同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+  });
 }
 
 function save(){
-  try{
-    collectMeta();
-    state._savedAt = Date.now();
-    localStorage.setItem(SK, JSON.stringify(state));
+  if(isRemoteUpdate) return;
+  isSaving = true;
+  collectMeta();
+  REF.set(state).then(()=>{
     setBadge('已儲存 ✦ ' + new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}));
-    showToast('已儲存 ✦');
-  }catch(e){ showToast('儲存失敗'); }
+    showToast('已儲存並同步 ✦');
+    isSaving = false;
+  }).catch(()=>{
+    showToast('儲存失敗，請確認網路');
+    isSaving = false;
+  });
 }
 
 function setBadge(msg){ document.getElementById('saveBadge').textContent = msg; }
-function scheduleSync(){ clearTimeout(syncTimer); syncTimer = setTimeout(save, 1500); }
+function scheduleSync(){ if(isRemoteUpdate) return; clearTimeout(syncTimer); syncTimer = setTimeout(save, 1500); }
 function saveNow(){ collectMeta(); save(); }
 
 /* ── meta ── */
