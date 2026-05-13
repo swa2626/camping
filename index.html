@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>露營菜單</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -13,10 +13,7 @@ body{background:#f5f0e8;min-height:100vh;font-family:'Noto Serif TC',serif;color
 .stamp{display:inline-block;border:2px solid #8b6f4e;border-radius:2px;padding:4px 10px;font-size:11px;letter-spacing:3px;color:#8b6f4e;margin-bottom:1.2rem;opacity:0.7;}
 h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3028;letter-spacing:4px;margin-bottom:0.3rem;}
 .subtitle{font-size:12px;color:#9a8878;letter-spacing:2px;margin-bottom:1rem;}
-.sync-badge{font-size:10px;letter-spacing:1px;color:#9a8878;text-align:right;margin-bottom:16px;}
-.sync-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#b8a88a;margin-right:4px;vertical-align:middle;}
-.sync-dot.live{background:#7aad7a;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.save-badge{font-size:10px;letter-spacing:1px;color:#9a8878;text-align:right;margin-bottom:16px;min-height:16px;}
 
 .meta-wrap{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(180,150,110,0.3);}
 .meta-row-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
@@ -38,13 +35,12 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 .panel{display:none;}
 .panel.active{display:block;}
 
-/* 菜單 */
 .day-block{margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(180,150,110,0.15);}
 .day-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.day-label-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.3);font-family:'Shippori Mincho',serif;font-size:15px;font-weight:500;letter-spacing:3px;color:#5c4a36;outline:none;padding:3px 0;width:200px;}
+.day-label-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.3);font-family:'Shippori Mincho',serif;font-size:15px;font-weight:500;letter-spacing:3px;color:#5c4a36;outline:none;padding:3px 0;width:220px;}
 .day-label-input::placeholder{color:#c5b8a8;}
 .day-label-input:focus{border-bottom-color:#8b6f4e;}
-.del-day-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:13px;padding:2px 4px;margin-left:auto;opacity:0;transition:opacity 0.2s;}
+.del-day-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:12px;padding:2px 4px;margin-left:auto;opacity:0;transition:opacity 0.2s;}
 .day-block:hover .del-day-btn{opacity:1;}
 .del-day-btn:hover{color:#8b6f4e;}
 .meal-row{display:grid;grid-template-columns:80px 1fr;align-items:start;gap:8px;margin-bottom:10px;}
@@ -71,13 +67,13 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 .add-day-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px dashed rgba(180,150,110,0.35);border-radius:2px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-top:8px;transition:all 0.2s;}
 .add-day-btn:hover{background:rgba(180,150,110,0.07);color:#5c4a36;}
 
-/* 準備清單 */
 .progress-label{font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:6px;}
 .progress-bar{height:3px;background:rgba(180,150,110,0.2);border-radius:2px;margin-bottom:1.2rem;overflow:hidden;}
 .progress-fill{height:100%;background:#8b6f4e;border-radius:2px;transition:width 0.4s;}
 .gear-section{margin-bottom:1.8rem;}
 .gear-section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .gear-section-title{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.25);font-family:'Noto Serif TC',serif;font-size:14px;letter-spacing:2px;color:#5c4a36;font-weight:500;padding-bottom:3px;outline:none;}
+.gear-section-title::placeholder{color:#c5b8a8;}
 .gear-section-title:focus{border-bottom-color:#8b6f4e;}
 .del-section-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:13px;padding:2px 4px;opacity:0;transition:opacity 0.2s;}
 .gear-section:hover .del-section-btn{opacity:1;}
@@ -105,7 +101,6 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 .btn-solid{background:#5c4a36;border:1px solid #5c4a36;color:#faf7f0;}
 .btn-solid:hover{background:#3a3028;}
 .toast{text-align:center;margin-top:10px;font-size:12px;letter-spacing:2px;color:#8b6f4e;min-height:18px;}
-.gear-section-title::placeholder{color:#c5b8a8;}
 </style>
 </head>
 <body>
@@ -113,10 +108,7 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 <div class="stamp">CAMP · JOURNAL</div>
 <h1>露營菜單</h1>
 <p class="subtitle">みんなで一緒に編集できます</p>
-<div class="sync-badge">
-  <span class="sync-dot" id="syncDot"></span>
-  <span id="syncStatus">連線中...</span>
-</div>
+<div class="save-badge" id="saveBadge">讀取中...</div>
 
 <div class="meta-wrap">
   <div class="meta-row-top">
@@ -165,82 +157,78 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 </div>
 <div class="toast" id="toast"></div>
 <div class="divider">— ✦ —</div>
-<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">書籤此頁面並分享給同行夥伴，即可共同編輯</p>
+<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">將此頁面加入書籤，下次開啟資料仍在</p>
 </div>
 
 <script>
-const SK='camping-v6';
-const PI=5000;
-let state={meta:{start:'',end:'',loc:'',ppl:''},menu:[],prep:[]};
-let syncTimer=null,lastJSON='',ctr=100,saving=false;
-function uid(){return 'x'+(++ctr)+Math.floor(Math.random()*9999);}
+const SK = 'camping-menu-v1';
+let state = { meta:{start:'',end:'',loc:'',ppl:''}, menu:[], prep:[] };
+let syncTimer = null, ctr = 100;
 
-const defaultMenu=[{id:uid(),label:'',meals:[
+function uid(){ return 'x'+(++ctr)+Math.floor(Math.random()*9999); }
+
+const defaultMenu = [{id:uid(),label:'',meals:[
   {id:uid(),time:'',dishes:['']},
   {id:uid(),time:'',dishes:['']},
   {id:uid(),time:'',dishes:['']}
 ]}];
-const defaultPrep=[
+const defaultPrep = [
   {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]},
   {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
 ];
 
+/* ── localStorage 儲存（在真實瀏覽器完全正常）── */
+function load(){
+  try{
+    const saved = localStorage.getItem(SK);
+    if(saved){
+      state = JSON.parse(saved);
+      setBadge('上次儲存：' + new Date(state._savedAt||Date.now()).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+    } else {
+      state.menu = JSON.parse(JSON.stringify(defaultMenu));
+      state.prep = JSON.parse(JSON.stringify(defaultPrep));
+      setBadge('尚未儲存');
+    }
+  }catch(e){
+    state.menu = JSON.parse(JSON.stringify(defaultMenu));
+    state.prep = JSON.parse(JSON.stringify(defaultPrep));
+    setBadge('');
+  }
+  applyMeta(); renderMenu(); renderPrep();
+}
+
+function save(){
+  try{
+    collectMeta();
+    state._savedAt = Date.now();
+    localStorage.setItem(SK, JSON.stringify(state));
+    setBadge('已儲存 ✦ ' + new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+    showToast('已儲存 ✦');
+  }catch(e){ showToast('儲存失敗'); }
+}
+
+function setBadge(msg){ document.getElementById('saveBadge').textContent = msg; }
+function scheduleSync(){ clearTimeout(syncTimer); syncTimer = setTimeout(save, 1500); }
+function saveNow(){ collectMeta(); save(); }
+
+/* ── meta ── */
 function formatDate(str){
   if(!str)return'';
   const d=new Date(str+'T00:00:00');
   return`${d.getMonth()+1}月${d.getDate()}號`;
 }
-
 function onDateChange(){
   collectMeta();
-  const s=state.meta.start,e=state.meta.end;
+  const s=state.meta.start, e=state.meta.end;
   const disp=document.getElementById('date-display');
   if(s&&e){
     const sd=new Date(s+'T00:00:00'),ed=new Date(e+'T00:00:00');
-    if(ed>=sd){const days=Math.round((ed-sd)/86400000);disp.textContent=`${formatDate(s)} 至 ${formatDate(e)}，共 ${days} 天`;}
+    if(ed>=sd){ const days=Math.round((ed-sd)/86400000); disp.textContent=`${formatDate(s)} 至 ${formatDate(e)}，共 ${days} 天`; }
     else disp.textContent='請確認結束日期';
-  }else if(s){disp.textContent=formatDate(s);}
+  } else if(s){ disp.textContent=formatDate(s); }
   else disp.textContent='';
   scheduleSync();
 }
-
-/* ── 雲端儲存 ── */
-async function load(){
-  try{
-    const r=await window.storage.get(SK,true);
-    if(r&&r.value){state=JSON.parse(r.value);lastJSON=r.value;}
-    else{state.menu=JSON.parse(JSON.stringify(defaultMenu));state.prep=JSON.parse(JSON.stringify(defaultPrep));}
-  }catch(e){state.menu=JSON.parse(JSON.stringify(defaultMenu));state.prep=JSON.parse(JSON.stringify(defaultPrep));}
-  applyMeta();renderMenu();renderPrep();setSyncStatus(true);
-  setInterval(poll,PI);
-}
-
-async function save(){
-  if(saving)return;saving=true;
-  try{
-    collectMeta();
-    const j=JSON.stringify(state);
-    await window.storage.set(SK,j,true);
-    lastJSON=j;showToast('已儲存 ✦');
-  }catch(e){showToast('儲存失敗');}
-  saving=false;
-}
-
-async function poll(){
-  try{
-    const r=await window.storage.get(SK,true);
-    if(r&&r.value&&r.value!==lastJSON){
-      state=JSON.parse(r.value);lastJSON=r.value;
-      applyMeta();renderMenu();renderPrep();showToast('✦ 有人更新了清單');
-    }
-  }catch(e){}
-}
-
-function setSyncStatus(live){
-  document.getElementById('syncDot').className='sync-dot'+(live?' live':'');
-  document.getElementById('syncStatus').textContent=live?'共編模式．即時同步':'離線';
-}
-
 function applyMeta(){
   document.getElementById('f-start').value=state.meta.start||'';
   document.getElementById('f-end').value=state.meta.end||'';
@@ -248,17 +236,12 @@ function applyMeta(){
   document.getElementById('f-ppl').value=state.meta.ppl||'';
   onDateChange();
 }
-
 function collectMeta(){
   state.meta.start=document.getElementById('f-start').value;
   state.meta.end=document.getElementById('f-end').value;
   state.meta.loc=document.getElementById('f-loc').value;
   state.meta.ppl=document.getElementById('f-ppl').value;
 }
-
-function scheduleSync(){clearTimeout(syncTimer);syncTimer=setTimeout(save,1800);}
-async function saveNow(){collectMeta();await save();}
-
 function switchTab(tab,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -266,111 +249,95 @@ function switchTab(tab,btn){
   document.getElementById('panel-'+tab).classList.add('active');
 }
 
-/* ══ 菜單（直接更新 state，不重新渲染）══ */
+/* ── 菜單 ── */
 function renderMenu(){
-  const c=document.getElementById('menu-container');c.innerHTML='';
+  const c=document.getElementById('menu-container'); c.innerHTML='';
   state.menu.forEach((day,di)=>c.appendChild(buildDayBlock(day,di)));
 }
-
 function buildDayBlock(day,di){
-  const block=document.createElement('div');block.className='day-block';
-  // header
-  const dh=document.createElement('div');dh.className='day-header';
-  const li=document.createElement('input');li.className='day-label-input';li.value=day.label;li.placeholder='第幾天（例：Day 1 · 週五）';
-  li.addEventListener('input',e=>{state.menu[di].label=e.target.value;scheduleSync();});
-  const db=document.createElement('button');db.className='del-day-btn';db.textContent='✕ 刪除此天';
-  db.addEventListener('click',()=>{state.menu.splice(di,1);renderMenu();scheduleSync();});
-  dh.appendChild(li);dh.appendChild(db);block.appendChild(dh);
-  // meals
+  const block=document.createElement('div'); block.className='day-block';
+  const dh=document.createElement('div'); dh.className='day-header';
+  const li=document.createElement('input'); li.className='day-label-input'; li.value=day.label; li.placeholder='第幾天（例：Day 1 · 週五）';
+  li.addEventListener('input',e=>{ state.menu[di].label=e.target.value; scheduleSync(); });
+  const db=document.createElement('button'); db.className='del-day-btn'; db.textContent='✕ 刪除此天';
+  db.addEventListener('click',()=>{ state.menu.splice(di,1); renderMenu(); scheduleSync(); });
+  dh.appendChild(li); dh.appendChild(db); block.appendChild(dh);
   day.meals.forEach((meal,mi)=>block.appendChild(buildMealRow(meal,di,mi)));
-  // add meal
-  const amb=document.createElement('button');amb.className='add-meal-btn';
+  const amb=document.createElement('button'); amb.className='add-meal-btn';
   amb.innerHTML='<div class="add-meal-line"></div><span>＋ 新增餐次</span><div class="add-meal-line"></div>';
   amb.addEventListener('click',()=>{
     state.menu[di].meals.push({id:uid(),time:'',dishes:['']});
-    renderMenu();scheduleSync();
-    setTimeout(()=>{const ins=document.querySelectorAll('.meal-time-input');if(ins.length)ins[ins.length-1].focus();},40);
+    renderMenu(); scheduleSync();
+    setTimeout(()=>{ const ins=document.querySelectorAll('.meal-time-input'); if(ins.length)ins[ins.length-1].focus(); },40);
   });
   block.appendChild(amb);
   return block;
 }
-
 function buildMealRow(meal,di,mi){
-  const row=document.createElement('div');row.className='meal-row';
-  const ti=document.createElement('input');ti.className='meal-time-input';ti.value=meal.time;ti.placeholder='早餐/午餐...';
-  ti.addEventListener('input',e=>{state.menu[di].meals[mi].time=e.target.value;scheduleSync();});
-  const dishes=document.createElement('div');dishes.className='meal-dishes';
-  meal.dishes.forEach((dish,dsi)=>dishes.appendChild(buildDishRow(dish,di,mi,dsi,dishes)));
-  // actions
-  const ma=document.createElement('div');ma.className='meal-actions';
-  const ab=document.createElement('button');ab.className='small-add';ab.textContent='＋ 新增菜色';
+  const row=document.createElement('div'); row.className='meal-row';
+  const ti=document.createElement('input'); ti.className='meal-time-input'; ti.value=meal.time; ti.placeholder='早餐/午餐...';
+  ti.addEventListener('input',e=>{ state.menu[di].meals[mi].time=e.target.value; scheduleSync(); });
+  const dishes=document.createElement('div'); dishes.className='meal-dishes';
+  meal.dishes.forEach((dish,dsi)=>dishes.appendChild(buildDishRow(dish,di,mi,dsi)));
+  const ma=document.createElement('div'); ma.className='meal-actions';
+  const ab=document.createElement('button'); ab.className='small-add'; ab.textContent='＋ 新增菜色';
   ab.addEventListener('click',()=>{
     state.menu[di].meals[mi].dishes.push('');
-    const dr=buildDishRow('',di,mi,state.menu[di].meals[mi].dishes.length-1,dishes);
+    const dr=buildDishRow('',di,mi,state.menu[di].meals[mi].dishes.length-1);
     dishes.insertBefore(dr,ma);
-    setTimeout(()=>{const inp=dr.querySelector('input');if(inp)inp.focus();},40);
+    setTimeout(()=>{ const inp=dr.querySelector('input'); if(inp)inp.focus(); },40);
     scheduleSync();
   });
-  const mb=document.createElement('button');mb.className='del-meal-btn';mb.textContent='刪除此餐';
-  mb.addEventListener('click',()=>{state.menu[di].meals.splice(mi,1);renderMenu();scheduleSync();});
-  ma.appendChild(ab);ma.appendChild(mb);
-  dishes.appendChild(ma);
-  row.appendChild(ti);row.appendChild(dishes);
+  const mb=document.createElement('button'); mb.className='del-meal-btn'; mb.textContent='刪除此餐';
+  mb.addEventListener('click',()=>{ state.menu[di].meals.splice(mi,1); renderMenu(); scheduleSync(); });
+  ma.appendChild(ab); ma.appendChild(mb); dishes.appendChild(ma);
+  row.appendChild(ti); row.appendChild(dishes);
   return row;
 }
-
-function buildDishRow(dish,di,mi,dsi,dishesContainer){
-  const dr=document.createElement('div');dr.className='dish-row';
-  const dot=document.createElement('span');dot.className='dish-dot';
-  const inp=document.createElement('input');inp.className='dish-input';inp.value=dish;inp.placeholder='菜色名稱';
-  // 直接更新 state，不重新渲染
+function buildDishRow(dish,di,mi,dsi){
+  const dr=document.createElement('div'); dr.className='dish-row';
+  const dot=document.createElement('span'); dot.className='dish-dot';
+  const inp=document.createElement('input'); inp.className='dish-input'; inp.value=dish; inp.placeholder='菜色名稱';
   inp.addEventListener('input',e=>{
-    if(state.menu[di]&&state.menu[di].meals[mi])
-      state.menu[di].meals[mi].dishes[dsi]=e.target.value;
+    if(state.menu[di]&&state.menu[di].meals[mi]) state.menu[di].meals[mi].dishes[dsi]=e.target.value;
     scheduleSync();
   });
-  const db2=document.createElement('button');db2.className='del-dish-btn';db2.textContent='✕';db2.setAttribute('aria-label','刪除');
-  db2.addEventListener('click',()=>{state.menu[di].meals[mi].dishes.splice(dsi,1);renderMenu();scheduleSync();});
-  dr.appendChild(dot);dr.appendChild(inp);dr.appendChild(db2);
+  const db2=document.createElement('button'); db2.className='del-dish-btn'; db2.textContent='✕'; db2.setAttribute('aria-label','刪除');
+  db2.addEventListener('click',()=>{ state.menu[di].meals[mi].dishes.splice(dsi,1); renderMenu(); scheduleSync(); });
+  dr.appendChild(dot); dr.appendChild(inp); dr.appendChild(db2);
   return dr;
 }
-
 function addDay(){
   state.menu.push({id:uid(),label:'',meals:[{id:uid(),time:'',dishes:['']}]});
-  renderMenu();scheduleSync();
-  setTimeout(()=>{const ins=document.querySelectorAll('.day-label-input');if(ins.length)ins[ins.length-1].focus();},40);
+  renderMenu(); scheduleSync();
+  setTimeout(()=>{ const ins=document.querySelectorAll('.day-label-input'); if(ins.length)ins[ins.length-1].focus(); },40);
 }
 
-/* ══ 準備清單（修正打字問題：input 事件只更新 state，不重新渲染）══ */
+/* ── 準備清單 ── */
 function renderPrep(){
-  const c=document.getElementById('prep-container');c.innerHTML='';
+  const c=document.getElementById('prep-container'); c.innerHTML='';
   updateProgress();
   state.prep.forEach((sec,si)=>c.appendChild(buildGearSection(sec,si)));
 }
-
 function updateProgress(){
   let total=0,done=0;
-  state.prep.forEach(sec=>sec.items.forEach(it=>{if(it.text.trim()){total++;if(it.checked)done++;}}));
+  state.prep.forEach(sec=>sec.items.forEach(it=>{ if(it.text.trim()){ total++; if(it.checked)done++; } }));
   const pct=total>0?Math.round(done/total*100):0;
   document.getElementById('prog-fill').style.width=pct+'%';
   document.getElementById('prog-label').textContent=total>0?`已確認 ${done} / ${total} 項　${pct}%`:'';
 }
-
 function buildGearSection(sec,si){
-  const block=document.createElement('div');block.className='gear-section';
-  const sh=document.createElement('div');sh.className='gear-section-header';
-  const ti=document.createElement('input');ti.className='gear-section-title';ti.value=sec.title;ti.placeholder='分類名稱（例：食材、炊具）';
-  // 只更新 state，不重新渲染
-  ti.addEventListener('input',e=>{state.prep[si].title=e.target.value;scheduleSync();});
-  const db=document.createElement('button');db.className='del-section-btn';db.textContent='✕';db.setAttribute('aria-label','刪除此分類');
-  db.addEventListener('click',()=>{state.prep.splice(si,1);renderPrep();scheduleSync();});
-  sh.appendChild(ti);sh.appendChild(db);block.appendChild(sh);
-
-  const list=document.createElement('ul');list.style.listStyle='none';
+  const block=document.createElement('div'); block.className='gear-section';
+  const sh=document.createElement('div'); sh.className='gear-section-header';
+  const ti=document.createElement('input'); ti.className='gear-section-title'; ti.value=sec.title; ti.placeholder='分類名稱（例：食材、炊具）';
+  ti.addEventListener('input',e=>{ state.prep[si].title=e.target.value; scheduleSync(); });
+  const db=document.createElement('button'); db.className='del-section-btn'; db.textContent='✕'; db.setAttribute('aria-label','刪除此分類');
+  db.addEventListener('click',()=>{ state.prep.splice(si,1); renderPrep(); scheduleSync(); });
+  sh.appendChild(ti); sh.appendChild(db); block.appendChild(sh);
+  const list=document.createElement('ul'); list.style.listStyle='none';
   sec.items.forEach((item,ii)=>list.appendChild(buildGearItem(item,si,ii,list)));
   block.appendChild(list);
-
-  const ar=document.createElement('div');ar.className='add-gear-item';
+  const ar=document.createElement('div'); ar.className='add-gear-item';
   ar.innerHTML='<div class="add-gear-line"></div><span>＋ 新增項目</span><div class="add-gear-line"></div>';
   ar.addEventListener('click',()=>{
     const newItem={id:uid(),text:'',checked:false};
@@ -378,49 +345,44 @@ function buildGearSection(sec,si){
     const row=buildGearItem(newItem,si,state.prep[si].items.length-1,list);
     list.appendChild(row);
     updateProgress();
-    setTimeout(()=>{const inp=row.querySelector('input');if(inp)inp.focus();},40);
+    setTimeout(()=>{ const inp=row.querySelector('input'); if(inp)inp.focus(); },40);
     scheduleSync();
   });
   block.appendChild(ar);
   return block;
 }
-
-function buildGearItem(item,si,ii,listEl){
-  const row=document.createElement('li');row.className='gear-item-row';
-  const cb=document.createElement('div');cb.className='gear-cb'+(item.checked?' checked':'');
-  cb.setAttribute('role','checkbox');cb.setAttribute('aria-checked',item.checked);
+function buildGearItem(item,si,ii){
+  const row=document.createElement('li'); row.className='gear-item-row';
+  const cb=document.createElement('div'); cb.className='gear-cb'+(item.checked?' checked':'');
+  cb.setAttribute('role','checkbox'); cb.setAttribute('aria-checked',item.checked);
+  const inp=document.createElement('input'); inp.className='gear-item-input'+(item.checked?' checked':'');
+  inp.value=item.text; inp.placeholder='物品或食材名稱';
   cb.addEventListener('click',()=>{
     state.prep[si].items[ii].checked=!state.prep[si].items[ii].checked;
     cb.className='gear-cb'+(state.prep[si].items[ii].checked?' checked':'');
     inp.className='gear-item-input'+(state.prep[si].items[ii].checked?' checked':'');
-    updateProgress();scheduleSync();
+    updateProgress(); scheduleSync();
   });
-  const inp=document.createElement('input');
-  inp.className='gear-item-input'+(item.checked?' checked':'');
-  inp.value=item.text;inp.placeholder='物品或食材名稱';
-  // ★ 關鍵修正：只更新 state，不重新渲染整個清單
   inp.addEventListener('input',e=>{
-    if(state.prep[si]&&state.prep[si].items[ii])
-      state.prep[si].items[ii].text=e.target.value;
+    if(state.prep[si]&&state.prep[si].items[ii]) state.prep[si].items[ii].text=e.target.value;
     scheduleSync();
   });
-  const db2=document.createElement('button');db2.className='del-dish-btn';db2.textContent='✕';db2.setAttribute('aria-label','刪除');
-  db2.addEventListener('click',()=>{state.prep[si].items.splice(ii,1);renderPrep();scheduleSync();});
-  row.appendChild(cb);row.appendChild(inp);row.appendChild(db2);
+  const db2=document.createElement('button'); db2.className='del-dish-btn'; db2.textContent='✕'; db2.setAttribute('aria-label','刪除');
+  db2.addEventListener('click',()=>{ state.prep[si].items.splice(ii,1); renderPrep(); scheduleSync(); });
+  row.appendChild(cb); row.appendChild(inp); row.appendChild(db2);
   return row;
 }
-
 function addSection(){
   state.prep.push({id:uid(),title:'',items:[{id:uid(),text:'',checked:false}]});
-  renderPrep();scheduleSync();
-  setTimeout(()=>{const ins=document.querySelectorAll('.gear-section-title');if(ins.length)ins[ins.length-1].focus();},40);
+  renderPrep(); scheduleSync();
+  setTimeout(()=>{ const ins=document.querySelectorAll('.gear-section-title'); if(ins.length)ins[ins.length-1].focus(); },40);
 }
 
-/* ══ 複製 ══ */
+/* ── 複製 ── */
 function copyLine(){
   collectMeta();
   let text='🏕️ 露營菜單\n';
-  const s=state.meta.start,e=state.meta.end;
+  const s=state.meta.start, e=state.meta.end;
   if(s&&e)text+=`📅 ${formatDate(s)} 至 ${formatDate(e)}`;
   else if(s)text+=`📅 ${formatDate(s)}`;
   if(state.meta.loc)text+=`　📍 ${state.meta.loc}`;
@@ -442,17 +404,17 @@ function copyLine(){
       const items=sec.items.filter(i=>i.text.trim());
       if(!items.length)return;
       if(sec.title.trim())text+=`\n${sec.title}\n`;
-      items.forEach(i=>{text+=`${i.checked?'☑':'□'} ${i.text}\n`;});
+      items.forEach(i=>{ text+=`${i.checked?'☑':'□'} ${i.text}\n`; });
     });
   }
   if(navigator.share){
     navigator.share({title:'露營菜單',text}).then(()=>showToast('已分享 ✦'));
-  }else{
+  } else {
     navigator.clipboard.writeText(text).then(()=>showToast('已複製！打開 LINE 貼上即可 ✦'));
   }
 }
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;setTimeout(()=>{t.textContent='';},3000);}
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; setTimeout(()=>{ t.textContent=''; },3000); }
 
 load();
 </script>
