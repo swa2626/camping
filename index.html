@@ -1,0 +1,460 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f0e8;min-height:100vh;font-family:'Noto Serif TC',serif;color:#3a3028;background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(180,160,120,0.12) 28px),repeating-linear-gradient(90deg,transparent,transparent 27px,rgba(180,160,120,0.06) 28px);}
+.paper{max-width:680px;margin:0 auto;background:#faf7f0;min-height:100vh;padding:2rem 2rem 4rem;box-shadow:2px 0 8px rgba(100,80,50,0.08),-2px 0 8px rgba(100,80,50,0.08);position:relative;}
+.paper::before{content:'';position:absolute;left:52px;top:0;bottom:0;width:1px;background:rgba(200,150,120,0.25);pointer-events:none;}
+.stamp{display:inline-block;border:2px solid #8b6f4e;border-radius:2px;padding:4px 10px;font-size:11px;letter-spacing:3px;color:#8b6f4e;margin-bottom:1.2rem;opacity:0.7;}
+h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3028;letter-spacing:4px;margin-bottom:0.3rem;}
+.subtitle{font-size:12px;color:#9a8878;letter-spacing:2px;margin-bottom:1rem;}
+.sync-badge{font-size:10px;letter-spacing:1px;color:#9a8878;text-align:right;margin-bottom:16px;}
+.sync-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#b8a88a;margin-right:4px;vertical-align:middle;}
+.sync-dot.live{background:#7aad7a;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+.meta-wrap{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(180,150,110,0.3);}
+.meta-row-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
+.meta-field label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:5px;}
+.meta-field input[type="text"]{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);width:100%;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;}
+.meta-field input[type="text"]::placeholder{color:#c5b8a8;}
+.meta-field input[type="text"]:focus{border-bottom-color:#8b6f4e;}
+.meta-date-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.date-field label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:5px;}
+.date-field input[type="date"]{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);width:100%;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;}
+.date-field input[type="date"]:focus{border-bottom-color:#8b6f4e;}
+.date-field input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;cursor:pointer;filter:sepia(1) saturate(0.5);}
+.date-display{font-size:11px;color:#8b6f4e;letter-spacing:1px;margin-top:8px;min-height:16px;text-align:center;}
+
+.tabs{display:flex;margin-bottom:1.5rem;border-bottom:1px solid rgba(180,150,110,0.3);}
+.tab{padding:8px 20px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.tab.active{color:#5c4a36;border-bottom-color:#8b6f4e;}
+.tab:hover{color:#5c4a36;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* 菜單 */
+.day-block{margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(180,150,110,0.15);}
+.day-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.day-label-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.3);font-family:'Shippori Mincho',serif;font-size:15px;font-weight:500;letter-spacing:3px;color:#5c4a36;outline:none;padding:3px 0;width:200px;}
+.day-label-input::placeholder{color:#c5b8a8;}
+.day-label-input:focus{border-bottom-color:#8b6f4e;}
+.del-day-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:13px;padding:2px 4px;margin-left:auto;opacity:0;transition:opacity 0.2s;}
+.day-block:hover .del-day-btn{opacity:1;}
+.del-day-btn:hover{color:#8b6f4e;}
+.meal-row{display:grid;grid-template-columns:80px 1fr;align-items:start;gap:8px;margin-bottom:10px;}
+.meal-time-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.2);font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:2px;color:#9a8878;outline:none;padding:3px 0;width:100%;}
+.meal-time-input::placeholder{color:#c5b8a8;}
+.meal-time-input:focus{border-bottom-color:#8b6f4e;}
+.meal-dishes{flex:1;}
+.dish-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.dish-dot{width:5px;height:5px;border:1px solid #8b6f4e;border-radius:50%;flex-shrink:0;opacity:0.5;}
+.dish-input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.1);font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;outline:none;letter-spacing:1px;padding:2px 0;}
+.dish-input::placeholder{color:#c5b8a8;font-size:12px;}
+.dish-input:focus{border-bottom-color:#8b6f4e;background:rgba(180,150,110,0.04);}
+.del-dish-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:12px;padding:2px;opacity:0;transition:opacity 0.2s;}
+.dish-row:hover .del-dish-btn,.gear-item-row:hover .del-dish-btn{opacity:1;}
+.del-dish-btn:hover{color:#8b6f4e;}
+.meal-actions{display:flex;gap:12px;margin-top:4px;}
+.small-add{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#9a8878;cursor:pointer;padding:2px 0;}
+.small-add:hover{color:#5c4a36;}
+.del-meal-btn{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#c5b8a8;cursor:pointer;padding:2px 0;}
+.del-meal-btn:hover{color:#8b6f4e;}
+.add-meal-btn{display:flex;align-items:center;gap:8px;width:100%;padding:6px 0;background:transparent;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-bottom:2px;opacity:0.7;transition:opacity 0.2s;}
+.add-meal-btn:hover{opacity:1;color:#5c4a36;}
+.add-meal-line{flex:1;height:1px;background:rgba(180,150,110,0.15);}
+.add-day-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px dashed rgba(180,150,110,0.35);border-radius:2px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-top:8px;transition:all 0.2s;}
+.add-day-btn:hover{background:rgba(180,150,110,0.07);color:#5c4a36;}
+
+/* 準備清單 */
+.progress-label{font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:6px;}
+.progress-bar{height:3px;background:rgba(180,150,110,0.2);border-radius:2px;margin-bottom:1.2rem;overflow:hidden;}
+.progress-fill{height:100%;background:#8b6f4e;border-radius:2px;transition:width 0.4s;}
+.gear-section{margin-bottom:1.8rem;}
+.gear-section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.gear-section-title{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.25);font-family:'Noto Serif TC',serif;font-size:14px;letter-spacing:2px;color:#5c4a36;font-weight:500;padding-bottom:3px;outline:none;}
+.gear-section-title:focus{border-bottom-color:#8b6f4e;}
+.del-section-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:13px;padding:2px 4px;opacity:0;transition:opacity 0.2s;}
+.gear-section:hover .del-section-btn{opacity:1;}
+.del-section-btn:hover{color:#8b6f4e;}
+.gear-item-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(180,150,110,0.1);}
+.gear-item-row:last-child{border-bottom:none;}
+.gear-cb{width:16px;height:16px;flex-shrink:0;border:1px solid rgba(180,150,110,0.5);border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-left:2px;}
+.gear-cb.checked{background:#8b6f4e;border-color:#8b6f4e;}
+.gear-cb.checked::after{content:'✓';color:#faf7f0;font-size:10px;line-height:1;}
+.gear-item-input{flex:1;background:transparent;border:none;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;outline:none;letter-spacing:1px;padding:2px 0;transition:color 0.2s;}
+.gear-item-input.checked{color:#b8a88a;text-decoration:line-through;}
+.gear-item-input::placeholder{color:#c5b8a8;font-size:12px;}
+.add-gear-item{display:flex;align-items:center;gap:8px;padding:4px 0;margin-top:2px;cursor:pointer;opacity:0.45;transition:opacity 0.2s;}
+.add-gear-item:hover{opacity:0.9;}
+.add-gear-item span{font-size:12px;letter-spacing:2px;color:#8b6f4e;}
+.add-gear-line{flex:1;height:1px;background:rgba(180,150,110,0.2);}
+.add-section-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px dashed rgba(180,150,110,0.35);border-radius:2px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-top:8px;transition:all 0.2s;}
+.add-section-btn:hover{background:rgba(180,150,110,0.07);color:#5c4a36;}
+
+.divider{text-align:center;margin:1.5rem 0;color:rgba(180,150,110,0.4);font-size:13px;letter-spacing:6px;}
+.actions{display:flex;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(180,150,110,0.2);}
+.btn{flex:1;padding:10px;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all 0.2s;}
+.btn-outline{background:transparent;border:1px solid #8b6f4e;color:#8b6f4e;}
+.btn-outline:hover{background:#8b6f4e;color:#faf7f0;}
+.btn-solid{background:#5c4a36;border:1px solid #5c4a36;color:#faf7f0;}
+.btn-solid:hover{background:#3a3028;}
+.toast{text-align:center;margin-top:10px;font-size:12px;letter-spacing:2px;color:#8b6f4e;min-height:18px;}
+.gear-section-title::placeholder{color:#c5b8a8;}
+</style>
+</head>
+<body>
+<div class="paper">
+<div class="stamp">CAMP · JOURNAL</div>
+<h1>露營菜單</h1>
+<p class="subtitle">みんなで一緒に編集できます</p>
+<div class="sync-badge">
+  <span class="sync-dot" id="syncDot"></span>
+  <span id="syncStatus">連線中...</span>
+</div>
+
+<div class="meta-wrap">
+  <div class="meta-row-top">
+    <div class="meta-field">
+      <label>地　點</label>
+      <input type="text" id="f-loc" placeholder="武陵農場" oninput="scheduleSync()"/>
+    </div>
+    <div class="meta-field">
+      <label>人　數</label>
+      <input type="text" id="f-ppl" placeholder="6 人" oninput="scheduleSync()"/>
+    </div>
+  </div>
+  <div class="meta-date-row">
+    <div class="date-field">
+      <label>開始日期</label>
+      <input type="date" id="f-start" oninput="onDateChange()"/>
+    </div>
+    <div class="date-field">
+      <label>結束日期</label>
+      <input type="date" id="f-end" oninput="onDateChange()"/>
+    </div>
+  </div>
+  <div class="date-display" id="date-display"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('menu',this)">菜單規劃</button>
+  <button class="tab" onclick="switchTab('prep',this)">準備清單</button>
+</div>
+
+<div id="panel-menu" class="panel active">
+  <div id="menu-container"></div>
+  <button class="add-day-btn" onclick="addDay()">＋ 新增一天</button>
+</div>
+
+<div id="panel-prep" class="panel">
+  <div class="progress-label" id="prog-label"></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  <div id="prep-container"></div>
+  <button class="add-section-btn" onclick="addSection()">＋ 新增分類</button>
+</div>
+
+<div class="actions">
+  <button class="btn btn-outline" onclick="copyLine()">複製 → LINE</button>
+  <button class="btn btn-solid" onclick="saveNow()">儲存</button>
+</div>
+<div class="toast" id="toast"></div>
+<div class="divider">— ✦ —</div>
+<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">書籤此頁面並分享給同行夥伴，即可共同編輯</p>
+</div>
+
+<script>
+const SK='camping-v6';
+const PI=5000;
+let state={meta:{start:'',end:'',loc:'',ppl:''},menu:[],prep:[]};
+let syncTimer=null,lastJSON='',ctr=100,saving=false;
+function uid(){return 'x'+(++ctr)+Math.floor(Math.random()*9999);}
+
+const defaultMenu=[{id:uid(),label:'',meals:[
+  {id:uid(),time:'',dishes:['']},
+  {id:uid(),time:'',dishes:['']},
+  {id:uid(),time:'',dishes:['']}
+]}];
+const defaultPrep=[
+  {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]},
+  {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
+];
+
+function formatDate(str){
+  if(!str)return'';
+  const d=new Date(str+'T00:00:00');
+  return`${d.getMonth()+1}月${d.getDate()}號`;
+}
+
+function onDateChange(){
+  collectMeta();
+  const s=state.meta.start,e=state.meta.end;
+  const disp=document.getElementById('date-display');
+  if(s&&e){
+    const sd=new Date(s+'T00:00:00'),ed=new Date(e+'T00:00:00');
+    if(ed>=sd){const days=Math.round((ed-sd)/86400000);disp.textContent=`${formatDate(s)} 至 ${formatDate(e)}，共 ${days} 天`;}
+    else disp.textContent='請確認結束日期';
+  }else if(s){disp.textContent=formatDate(s);}
+  else disp.textContent='';
+  scheduleSync();
+}
+
+/* ── 雲端儲存 ── */
+async function load(){
+  try{
+    const r=await window.storage.get(SK,true);
+    if(r&&r.value){state=JSON.parse(r.value);lastJSON=r.value;}
+    else{state.menu=JSON.parse(JSON.stringify(defaultMenu));state.prep=JSON.parse(JSON.stringify(defaultPrep));}
+  }catch(e){state.menu=JSON.parse(JSON.stringify(defaultMenu));state.prep=JSON.parse(JSON.stringify(defaultPrep));}
+  applyMeta();renderMenu();renderPrep();setSyncStatus(true);
+  setInterval(poll,PI);
+}
+
+async function save(){
+  if(saving)return;saving=true;
+  try{
+    collectMeta();
+    const j=JSON.stringify(state);
+    await window.storage.set(SK,j,true);
+    lastJSON=j;showToast('已儲存 ✦');
+  }catch(e){showToast('儲存失敗');}
+  saving=false;
+}
+
+async function poll(){
+  try{
+    const r=await window.storage.get(SK,true);
+    if(r&&r.value&&r.value!==lastJSON){
+      state=JSON.parse(r.value);lastJSON=r.value;
+      applyMeta();renderMenu();renderPrep();showToast('✦ 有人更新了清單');
+    }
+  }catch(e){}
+}
+
+function setSyncStatus(live){
+  document.getElementById('syncDot').className='sync-dot'+(live?' live':'');
+  document.getElementById('syncStatus').textContent=live?'共編模式．即時同步':'離線';
+}
+
+function applyMeta(){
+  document.getElementById('f-start').value=state.meta.start||'';
+  document.getElementById('f-end').value=state.meta.end||'';
+  document.getElementById('f-loc').value=state.meta.loc||'';
+  document.getElementById('f-ppl').value=state.meta.ppl||'';
+  onDateChange();
+}
+
+function collectMeta(){
+  state.meta.start=document.getElementById('f-start').value;
+  state.meta.end=document.getElementById('f-end').value;
+  state.meta.loc=document.getElementById('f-loc').value;
+  state.meta.ppl=document.getElementById('f-ppl').value;
+}
+
+function scheduleSync(){clearTimeout(syncTimer);syncTimer=setTimeout(save,1800);}
+async function saveNow(){collectMeta();await save();}
+
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+/* ══ 菜單（直接更新 state，不重新渲染）══ */
+function renderMenu(){
+  const c=document.getElementById('menu-container');c.innerHTML='';
+  state.menu.forEach((day,di)=>c.appendChild(buildDayBlock(day,di)));
+}
+
+function buildDayBlock(day,di){
+  const block=document.createElement('div');block.className='day-block';
+  // header
+  const dh=document.createElement('div');dh.className='day-header';
+  const li=document.createElement('input');li.className='day-label-input';li.value=day.label;li.placeholder='第幾天（例：Day 1 · 週五）';
+  li.addEventListener('input',e=>{state.menu[di].label=e.target.value;scheduleSync();});
+  const db=document.createElement('button');db.className='del-day-btn';db.textContent='✕ 刪除此天';
+  db.addEventListener('click',()=>{state.menu.splice(di,1);renderMenu();scheduleSync();});
+  dh.appendChild(li);dh.appendChild(db);block.appendChild(dh);
+  // meals
+  day.meals.forEach((meal,mi)=>block.appendChild(buildMealRow(meal,di,mi)));
+  // add meal
+  const amb=document.createElement('button');amb.className='add-meal-btn';
+  amb.innerHTML='<div class="add-meal-line"></div><span>＋ 新增餐次</span><div class="add-meal-line"></div>';
+  amb.addEventListener('click',()=>{
+    state.menu[di].meals.push({id:uid(),time:'',dishes:['']});
+    renderMenu();scheduleSync();
+    setTimeout(()=>{const ins=document.querySelectorAll('.meal-time-input');if(ins.length)ins[ins.length-1].focus();},40);
+  });
+  block.appendChild(amb);
+  return block;
+}
+
+function buildMealRow(meal,di,mi){
+  const row=document.createElement('div');row.className='meal-row';
+  const ti=document.createElement('input');ti.className='meal-time-input';ti.value=meal.time;ti.placeholder='早餐/午餐...';
+  ti.addEventListener('input',e=>{state.menu[di].meals[mi].time=e.target.value;scheduleSync();});
+  const dishes=document.createElement('div');dishes.className='meal-dishes';
+  meal.dishes.forEach((dish,dsi)=>dishes.appendChild(buildDishRow(dish,di,mi,dsi,dishes)));
+  // actions
+  const ma=document.createElement('div');ma.className='meal-actions';
+  const ab=document.createElement('button');ab.className='small-add';ab.textContent='＋ 新增菜色';
+  ab.addEventListener('click',()=>{
+    state.menu[di].meals[mi].dishes.push('');
+    const dr=buildDishRow('',di,mi,state.menu[di].meals[mi].dishes.length-1,dishes);
+    dishes.insertBefore(dr,ma);
+    setTimeout(()=>{const inp=dr.querySelector('input');if(inp)inp.focus();},40);
+    scheduleSync();
+  });
+  const mb=document.createElement('button');mb.className='del-meal-btn';mb.textContent='刪除此餐';
+  mb.addEventListener('click',()=>{state.menu[di].meals.splice(mi,1);renderMenu();scheduleSync();});
+  ma.appendChild(ab);ma.appendChild(mb);
+  dishes.appendChild(ma);
+  row.appendChild(ti);row.appendChild(dishes);
+  return row;
+}
+
+function buildDishRow(dish,di,mi,dsi,dishesContainer){
+  const dr=document.createElement('div');dr.className='dish-row';
+  const dot=document.createElement('span');dot.className='dish-dot';
+  const inp=document.createElement('input');inp.className='dish-input';inp.value=dish;inp.placeholder='菜色名稱';
+  // 直接更新 state，不重新渲染
+  inp.addEventListener('input',e=>{
+    if(state.menu[di]&&state.menu[di].meals[mi])
+      state.menu[di].meals[mi].dishes[dsi]=e.target.value;
+    scheduleSync();
+  });
+  const db2=document.createElement('button');db2.className='del-dish-btn';db2.textContent='✕';db2.setAttribute('aria-label','刪除');
+  db2.addEventListener('click',()=>{state.menu[di].meals[mi].dishes.splice(dsi,1);renderMenu();scheduleSync();});
+  dr.appendChild(dot);dr.appendChild(inp);dr.appendChild(db2);
+  return dr;
+}
+
+function addDay(){
+  state.menu.push({id:uid(),label:'',meals:[{id:uid(),time:'',dishes:['']}]});
+  renderMenu();scheduleSync();
+  setTimeout(()=>{const ins=document.querySelectorAll('.day-label-input');if(ins.length)ins[ins.length-1].focus();},40);
+}
+
+/* ══ 準備清單（修正打字問題：input 事件只更新 state，不重新渲染）══ */
+function renderPrep(){
+  const c=document.getElementById('prep-container');c.innerHTML='';
+  updateProgress();
+  state.prep.forEach((sec,si)=>c.appendChild(buildGearSection(sec,si)));
+}
+
+function updateProgress(){
+  let total=0,done=0;
+  state.prep.forEach(sec=>sec.items.forEach(it=>{if(it.text.trim()){total++;if(it.checked)done++;}}));
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=total>0?`已確認 ${done} / ${total} 項　${pct}%`:'';
+}
+
+function buildGearSection(sec,si){
+  const block=document.createElement('div');block.className='gear-section';
+  const sh=document.createElement('div');sh.className='gear-section-header';
+  const ti=document.createElement('input');ti.className='gear-section-title';ti.value=sec.title;ti.placeholder='分類名稱（例：食材、炊具）';
+  // 只更新 state，不重新渲染
+  ti.addEventListener('input',e=>{state.prep[si].title=e.target.value;scheduleSync();});
+  const db=document.createElement('button');db.className='del-section-btn';db.textContent='✕';db.setAttribute('aria-label','刪除此分類');
+  db.addEventListener('click',()=>{state.prep.splice(si,1);renderPrep();scheduleSync();});
+  sh.appendChild(ti);sh.appendChild(db);block.appendChild(sh);
+
+  const list=document.createElement('ul');list.style.listStyle='none';
+  sec.items.forEach((item,ii)=>list.appendChild(buildGearItem(item,si,ii,list)));
+  block.appendChild(list);
+
+  const ar=document.createElement('div');ar.className='add-gear-item';
+  ar.innerHTML='<div class="add-gear-line"></div><span>＋ 新增項目</span><div class="add-gear-line"></div>';
+  ar.addEventListener('click',()=>{
+    const newItem={id:uid(),text:'',checked:false};
+    state.prep[si].items.push(newItem);
+    const row=buildGearItem(newItem,si,state.prep[si].items.length-1,list);
+    list.appendChild(row);
+    updateProgress();
+    setTimeout(()=>{const inp=row.querySelector('input');if(inp)inp.focus();},40);
+    scheduleSync();
+  });
+  block.appendChild(ar);
+  return block;
+}
+
+function buildGearItem(item,si,ii,listEl){
+  const row=document.createElement('li');row.className='gear-item-row';
+  const cb=document.createElement('div');cb.className='gear-cb'+(item.checked?' checked':'');
+  cb.setAttribute('role','checkbox');cb.setAttribute('aria-checked',item.checked);
+  cb.addEventListener('click',()=>{
+    state.prep[si].items[ii].checked=!state.prep[si].items[ii].checked;
+    cb.className='gear-cb'+(state.prep[si].items[ii].checked?' checked':'');
+    inp.className='gear-item-input'+(state.prep[si].items[ii].checked?' checked':'');
+    updateProgress();scheduleSync();
+  });
+  const inp=document.createElement('input');
+  inp.className='gear-item-input'+(item.checked?' checked':'');
+  inp.value=item.text;inp.placeholder='物品或食材名稱';
+  // ★ 關鍵修正：只更新 state，不重新渲染整個清單
+  inp.addEventListener('input',e=>{
+    if(state.prep[si]&&state.prep[si].items[ii])
+      state.prep[si].items[ii].text=e.target.value;
+    scheduleSync();
+  });
+  const db2=document.createElement('button');db2.className='del-dish-btn';db2.textContent='✕';db2.setAttribute('aria-label','刪除');
+  db2.addEventListener('click',()=>{state.prep[si].items.splice(ii,1);renderPrep();scheduleSync();});
+  row.appendChild(cb);row.appendChild(inp);row.appendChild(db2);
+  return row;
+}
+
+function addSection(){
+  state.prep.push({id:uid(),title:'',items:[{id:uid(),text:'',checked:false}]});
+  renderPrep();scheduleSync();
+  setTimeout(()=>{const ins=document.querySelectorAll('.gear-section-title');if(ins.length)ins[ins.length-1].focus();},40);
+}
+
+/* ══ 複製 ══ */
+function copyLine(){
+  collectMeta();
+  let text='🏕️ 露營菜單\n';
+  const s=state.meta.start,e=state.meta.end;
+  if(s&&e)text+=`📅 ${formatDate(s)} 至 ${formatDate(e)}`;
+  else if(s)text+=`📅 ${formatDate(s)}`;
+  if(state.meta.loc)text+=`　📍 ${state.meta.loc}`;
+  if(state.meta.ppl)text+=`　👥 ${state.meta.ppl}`;
+  text+='\n━━━━━━━━━━━━━━\n\n【菜單規劃】\n';
+  state.menu.forEach(day=>{
+    if(!day.label&&!day.meals.some(m=>m.time||m.dishes.some(d=>d.trim())))return;
+    text+=`\n▸ ${day.label||'（未命名）'}\n`;
+    day.meals.forEach(meal=>{
+      const dishes=meal.dishes.filter(d=>d.trim());
+      if(!meal.time&&!dishes.length)return;
+      text+=`  ${meal.time||'—'}：${dishes.join('、')||'（待填）'}\n`;
+    });
+  });
+  const hasPrep=state.prep.some(s=>s.items.some(i=>i.text.trim()));
+  if(hasPrep){
+    text+='\n━━━━━━━━━━━━━━\n\n【準備清單】\n';
+    state.prep.forEach(sec=>{
+      const items=sec.items.filter(i=>i.text.trim());
+      if(!items.length)return;
+      if(sec.title.trim())text+=`\n${sec.title}\n`;
+      items.forEach(i=>{text+=`${i.checked?'☑':'□'} ${i.text}\n`;});
+    });
+  }
+  if(navigator.share){
+    navigator.share({title:'露營菜單',text}).then(()=>showToast('已分享 ✦'));
+  }else{
+    navigator.clipboard.writeText(text).then(()=>showToast('已複製！打開 LINE 貼上即可 ✦'));
+  }
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;setTimeout(()=>{t.textContent='';},3000);}
+
+load();
+</script>
+</body>
+</html>
