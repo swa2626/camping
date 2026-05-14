@@ -189,40 +189,67 @@ const defaultPrep = [
   {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
 ];
 
-/* ── Firebase 讀取與即時同步 ── */
+/* ── 讀取與同步 ── */
+let loaded = false; // 防止 startListening 第一次觸發覆蓋資料
+
 function load(){
   setBadge('連線中...');
+  // 先從 localStorage 讀出暫存，讓畫面不空白
+  try{
+    const cached = localStorage.getItem(SK);
+    if(cached){ state = JSON.parse(cached); applyMeta(); renderMenu(); renderPrep(); }
+  }catch(e){}
+
+  // 再從 Firebase 讀取最新資料
   REF.once('value').then(snap => {
     const data = snap.val();
     if(data){
       state = data;
-      setBadge('✦ 雲端同步中');
+      // 同步一份到 localStorage 當備份
+      localStorage.setItem(SK, JSON.stringify(state));
+      setBadge('✦ 雲端同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
     } else {
-      state.menu = JSON.parse(JSON.stringify(defaultMenu));
-      state.prep = JSON.parse(JSON.stringify(defaultPrep));
-      setBadge('尚未有資料');
+      // Firebase 是空的，用 localStorage 或預設值
+      const cached = localStorage.getItem(SK);
+      if(cached){ state = JSON.parse(cached); setBadge('✦ 已連線（本機備份）'); }
+      else {
+        state.menu = JSON.parse(JSON.stringify(defaultMenu));
+        state.prep = JSON.parse(JSON.stringify(defaultPrep));
+        setBadge('✦ 已連線，尚無資料');
+      }
     }
+    loaded = true;
     applyMeta(); renderMenu(); renderPrep();
     startListening();
   }).catch(()=>{
-    state.menu = JSON.parse(JSON.stringify(defaultMenu));
-    state.prep = JSON.parse(JSON.stringify(defaultPrep));
-    setBadge('⚠️ 無法連線，請確認網路');
+    // Firebase 連不上，用 localStorage
+    loaded = true;
+    try{
+      const cached = localStorage.getItem(SK);
+      if(cached){ state = JSON.parse(cached); }
+      else { state.menu = JSON.parse(JSON.stringify(defaultMenu)); state.prep = JSON.parse(JSON.stringify(defaultPrep)); }
+    }catch(e){ state.menu = JSON.parse(JSON.stringify(defaultMenu)); state.prep = JSON.parse(JSON.stringify(defaultPrep)); }
+    setBadge('📱 離線模式（本機儲存）');
     applyMeta(); renderMenu(); renderPrep();
   });
 }
 
-/* 監聽遠端變更（其他裝置更新時自動刷新） */
+/* 監聽其他裝置的更新 */
 function startListening(){
+  let firstCall = true;
   REF.on('value', snap => {
-    if(isSaving) return; // 自己在存，不要觸發
+    // 第一次呼叫是 Firebase 自動觸發的，跳過（已在 load() 處理過了）
+    if(firstCall){ firstCall = false; return; }
+    if(isSaving) return;
     const data = snap.val();
     if(!data) return;
     state = data;
+    localStorage.setItem(SK, JSON.stringify(state)); // 同步備份
     isRemoteUpdate = true;
     applyMeta(); renderMenu(); renderPrep();
     isRemoteUpdate = false;
     setBadge('✦ 已同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+    showToast('✦ 資料已更新');
   });
 }
 
@@ -230,12 +257,17 @@ function save(){
   if(isRemoteUpdate) return;
   isSaving = true;
   collectMeta();
+  // 同時存 Firebase + localStorage（雙重保險）
+  localStorage.setItem(SK, JSON.stringify(state));
   REF.set(state).then(()=>{
-    setBadge('已儲存 ✦ ' + new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+    const t = new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    setBadge('已儲存並同步 ✦ ' + t);
     showToast('已儲存並同步 ✦');
     isSaving = false;
   }).catch(()=>{
-    showToast('儲存失敗，請確認網路');
+    // Firebase 失敗，至少 localStorage 有存
+    setBadge('📱 已存本機（雲端暫時無法連線）');
+    showToast('已存本機備份');
     isSaving = false;
   });
 }
