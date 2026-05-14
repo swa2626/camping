@@ -101,63 +101,129 @@ h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3
 .btn-solid{background:#5c4a36;border:1px solid #5c4a36;color:#faf7f0;}
 .btn-solid:hover{background:#3a3028;}
 .toast{text-align:center;margin-top:10px;font-size:12px;letter-spacing:2px;color:#8b6f4e;min-height:18px;}
+
+/* ── 首頁（選擇露營）── */
+#home-screen{display:block;}
+#trip-screen{display:none;}
+.home-title{font-family:'Shippori Mincho',serif;font-size:24px;font-weight:500;color:#3a3028;letter-spacing:4px;margin-bottom:0.3rem;}
+.home-sub{font-size:12px;color:#9a8878;letter-spacing:2px;margin-bottom:2rem;}
+.new-trip-box{border:1px dashed rgba(180,150,110,0.5);border-radius:4px;padding:1.2rem;margin-bottom:2rem;}
+.new-trip-box label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:6px;}
+.new-trip-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
+.new-trip-row input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;}
+.new-trip-row input::placeholder{color:#c5b8a8;}
+.new-trip-row input:focus{border-bottom-color:#8b6f4e;}
+.btn-create{padding:8px 20px;background:#5c4a36;border:none;border-radius:2px;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:2px;color:#faf7f0;cursor:pointer;white-space:nowrap;}
+.btn-create:hover{background:#3a3028;}
+.trips-list{margin-top:0.5rem;}
+.trips-list-title{font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:10px;}
+.trip-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(180,150,110,0.12);cursor:pointer;}
+.trip-item:last-child{border-bottom:none;}
+.trip-item:hover .trip-name{color:#5c4a36;}
+.trip-dot{width:6px;height:6px;border:1px solid #8b6f4e;border-radius:50%;flex-shrink:0;opacity:0.5;}
+.trip-name{flex:1;font-size:14px;letter-spacing:1px;color:#3a3028;transition:color 0.2s;}
+.trip-date{font-size:11px;color:#b8a88a;letter-spacing:1px;}
+.trip-del{background:none;border:none;color:#c5b8a8;font-size:12px;cursor:pointer;padding:2px 6px;opacity:0;transition:opacity 0.2s;}
+.trip-item:hover .trip-del{opacity:1;}
+.trip-del:hover{color:#8b6f4e;}
+.back-btn{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;padding:0;margin-bottom:1.2rem;display:flex;align-items:center;gap:6px;}
+.back-btn:hover{color:#5c4a36;}
+.share-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
+.share-url{flex:1;font-size:11px;color:#9a8878;letter-spacing:0.5px;word-break:break-all;background:rgba(180,150,110,0.08);padding:6px 8px;border-radius:2px;}
+.btn-copy-url{background:none;border:1px solid rgba(180,150,110,0.4);border-radius:2px;padding:4px 10px;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#8b6f4e;cursor:pointer;white-space:nowrap;}
+.btn-copy-url:hover{background:#8b6f4e;color:#faf7f0;}
+.empty-msg{font-size:12px;color:#c5b8a8;letter-spacing:1px;text-align:center;padding:1rem 0;}
 </style>
 </head>
 <body>
 <div class="paper">
-<div class="stamp">CAMP · JOURNAL</div>
-<h1>露營菜單</h1>
-<p class="subtitle">みんなで一緒に編集できます</p>
-<div class="save-badge" id="saveBadge">讀取中...</div>
 
-<div class="meta-wrap">
-  <div class="meta-row-top">
-    <div class="meta-field">
-      <label>地　點</label>
-      <input type="text" id="f-loc" placeholder="武陵農場" oninput="scheduleSync()"/>
-    </div>
-    <div class="meta-field">
-      <label>人　數</label>
-      <input type="text" id="f-ppl" placeholder="6 人" oninput="scheduleSync()"/>
+<!-- ══ 首頁：選擇露營 ══ -->
+<div id="home-screen">
+  <div class="stamp">CAMP · JOURNAL</div>
+  <div class="home-title">露營菜單</div>
+  <p class="home-sub">みんなで一緒に編集できます</p>
+
+  <div class="new-trip-box">
+    <label>建立新的露營清單</label>
+    <div class="new-trip-row">
+      <input type="text" id="new-trip-name" placeholder="露營名稱（例：六月武陵露營）" />
+      <button class="btn-create" onclick="createTrip()">建立</button>
     </div>
   </div>
-  <div class="meta-date-row">
-    <div class="date-field">
-      <label>開始日期</label>
-      <input type="date" id="f-start" oninput="onDateChange()"/>
+
+  <div class="trips-list">
+    <div class="trips-list-title">我的露營清單</div>
+    <div id="trips-container"><div class="empty-msg">尚無清單，建立第一個吧！</div></div>
+  </div>
+</div>
+
+<!-- ══ 清單頁：填寫菜單 ══ -->
+<div id="trip-screen">
+  <button class="back-btn" onclick="goHome()">← 返回清單</button>
+  <div class="stamp">CAMP · JOURNAL</div>
+  <h1>露營菜單</h1>
+  <p class="subtitle">みんなで一緒に編集できます</p>
+  <div class="save-badge" id="saveBadge">讀取中...</div>
+
+  <div class="meta-wrap">
+    <div class="meta-row-top">
+      <div class="meta-field">
+        <label>地　點</label>
+        <input type="text" id="f-loc" placeholder="武陵農場" oninput="scheduleSync()"/>
+      </div>
+      <div class="meta-field">
+        <label>人　數</label>
+        <input type="text" id="f-ppl" placeholder="6 人" oninput="scheduleSync()"/>
+      </div>
     </div>
-    <div class="date-field">
-      <label>結束日期</label>
-      <input type="date" id="f-end" oninput="onDateChange()"/>
+    <div class="meta-date-row">
+      <div class="date-field">
+        <label>開始日期</label>
+        <input type="date" id="f-start" oninput="onDateChange()"/>
+      </div>
+      <div class="date-field">
+        <label>結束日期</label>
+        <input type="date" id="f-end" oninput="onDateChange()"/>
+      </div>
+    </div>
+    <div class="date-display" id="date-display"></div>
+  </div>
+
+  <div style="margin-bottom:1.5rem;">
+    <div style="font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:6px;">分享此清單給夥伴</div>
+    <div class="share-row">
+      <div class="share-url" id="share-url"></div>
+      <button class="btn-copy-url" onclick="copyShareUrl()">複製連結</button>
     </div>
   </div>
-  <div class="date-display" id="date-display"></div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('menu',this)">菜單規劃</button>
+    <button class="tab" onclick="switchTab('prep',this)">準備清單</button>
+  </div>
+
+  <div id="panel-menu" class="panel active">
+    <div id="menu-container"></div>
+    <button class="add-day-btn" onclick="addDay()">＋ 新增一天</button>
+  </div>
+
+  <div id="panel-prep" class="panel">
+    <div class="progress-label" id="prog-label"></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    <div id="prep-container"></div>
+    <button class="add-section-btn" onclick="addSection()">＋ 新增分類</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-outline" onclick="copyLine()">複製 → LINE</button>
+    <button class="btn btn-solid" onclick="saveNow()">儲存</button>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="divider">— ✦ —</div>
+  <p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">分享連結給夥伴，所有裝置即時同步 ✦</p>
 </div>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('menu',this)">菜單規劃</button>
-  <button class="tab" onclick="switchTab('prep',this)">準備清單</button>
-</div>
-
-<div id="panel-menu" class="panel active">
-  <div id="menu-container"></div>
-  <button class="add-day-btn" onclick="addDay()">＋ 新增一天</button>
-</div>
-
-<div id="panel-prep" class="panel">
-  <div class="progress-label" id="prog-label"></div>
-  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
-  <div id="prep-container"></div>
-  <button class="add-section-btn" onclick="addSection()">＋ 新增分類</button>
-</div>
-
-<div class="actions">
-  <button class="btn btn-outline" onclick="copyLine()">複製 → LINE</button>
-  <button class="btn btn-solid" onclick="saveNow()">儲存</button>
-</div>
-<div class="toast" id="toast"></div>
-<div class="divider">— ✦ —</div>
-<p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">將網址分享給夥伴，所有裝置即時同步 ✦</p>
 </div>
 
 <!-- Firebase SDK -->
@@ -171,11 +237,13 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const REF = db.ref('camping-menu-v1');
 
-const SK = 'camping-menu-v1';
+/* ══ 狀態 ══ */
+let currentTripId = null;
+let currentREF = null;
 let state = { meta:{start:'',end:'',loc:'',ppl:''}, menu:[], prep:[] };
 let syncTimer = null, ctr = 100, isSaving = false, isRemoteUpdate = false;
+let listenerOff = null;
 
 function uid(){ return 'x'+(++ctr)+Math.floor(Math.random()*9999); }
 
@@ -189,90 +257,167 @@ const defaultPrep = [
   {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
 ];
 
-/* ── 讀取與同步 ── */
-let loaded = false; // 防止 startListening 第一次觸發覆蓋資料
+/* ══ 首頁邏輯 ══ */
+function init(){
+  // 如果網址有 ?id=xxx，直接進入那份清單
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(id){
+    openTrip(id);
+  } else {
+    showHome();
+  }
+}
 
-function load(){
+function showHome(){
+  document.getElementById('home-screen').style.display = 'block';
+  document.getElementById('trip-screen').style.display = 'none';
+  loadTripList();
+}
+
+function goHome(){
+  if(listenerOff){ listenerOff(); listenerOff = null; }
+  currentTripId = null; currentREF = null;
+  history.pushState({}, '', window.location.pathname);
+  showHome();
+}
+
+function loadTripList(){
+  const listRef = db.ref('trip-index');
+  listRef.once('value').then(snap => {
+    const data = snap.val();
+    const container = document.getElementById('trips-container');
+    if(!data){
+      container.innerHTML = '<div class="empty-msg">尚無清單，建立第一個吧！</div>';
+      return;
+    }
+    const trips = Object.entries(data).sort((a,b) => b[1].createdAt - a[1].createdAt);
+    container.innerHTML = '';
+    trips.forEach(([id, info]) => {
+      const item = document.createElement('div');
+      item.className = 'trip-item';
+      const dot = document.createElement('span'); dot.className = 'trip-dot';
+      const name = document.createElement('span'); name.className = 'trip-name'; name.textContent = info.name || '未命名清單';
+      const date = document.createElement('span'); date.className = 'trip-date';
+      date.textContent = new Date(info.createdAt).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'}) + ' 建立';
+      const del = document.createElement('button'); del.className = 'trip-del'; del.textContent = '✕';
+      del.onclick = (e) => { e.stopPropagation(); deleteTrip(id, info.name); };
+      item.onclick = () => openTrip(id);
+      item.appendChild(dot); item.appendChild(name); item.appendChild(date); item.appendChild(del);
+      container.appendChild(item);
+    });
+  });
+}
+
+function createTrip(){
+  const nameInput = document.getElementById('new-trip-name');
+  const name = nameInput.value.trim() || '新露營清單';
+  const id = 'trip-' + Date.now();
+  const info = { name, createdAt: Date.now() };
+  db.ref('trip-index/' + id).set(info).then(() => {
+    nameInput.value = '';
+    openTrip(id);
+  });
+}
+
+function deleteTrip(id, name){
+  if(!confirm(`確定要刪除「${name}」？\n這個動作無法復原。`)) return;
+  db.ref('trip-index/' + id).remove();
+  db.ref('trips/' + id).remove();
+  loadTripList();
+}
+
+function openTrip(id){
+  currentTripId = id;
+  currentREF = db.ref('trips/' + id);
+  history.pushState({}, '', '?id=' + id);
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('trip-screen').style.display = 'block';
+  // 顯示分享網址
+  const url = window.location.href;
+  document.getElementById('share-url').textContent = url;
+  loadTrip();
+}
+
+function copyShareUrl(){
+  const url = document.getElementById('share-url').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('連結已複製！貼到 LINE 分享給夥伴 ✦'));
+}
+
+/* ══ 清單讀取與同步 ══ */
+function loadTrip(){
   setBadge('連線中...');
-  // 先從 localStorage 讀出暫存，讓畫面不空白
+  // 先從 localStorage 讀快取
   try{
-    const cached = localStorage.getItem(SK);
+    const cached = localStorage.getItem(currentTripId);
     if(cached){ state = JSON.parse(cached); applyMeta(); renderMenu(); renderPrep(); }
   }catch(e){}
 
-  // 再從 Firebase 讀取最新資料
-  REF.once('value').then(snap => {
+  currentREF.once('value').then(snap => {
     const data = snap.val();
     if(data){
       state = data;
-      // 同步一份到 localStorage 當備份
-      localStorage.setItem(SK, JSON.stringify(state));
+      localStorage.setItem(currentTripId, JSON.stringify(state));
       setBadge('✦ 雲端同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
     } else {
-      // Firebase 是空的，用 localStorage 或預設值
-      const cached = localStorage.getItem(SK);
-      if(cached){ state = JSON.parse(cached); setBadge('✦ 已連線（本機備份）'); }
+      const cached = localStorage.getItem(currentTripId);
+      if(cached){ state = JSON.parse(cached); }
       else {
-        state.menu = JSON.parse(JSON.stringify(defaultMenu));
-        state.prep = JSON.parse(JSON.stringify(defaultPrep));
-        setBadge('✦ 已連線，尚無資料');
+        state = { meta:{start:'',end:'',loc:'',ppl:''}, menu: JSON.parse(JSON.stringify(defaultMenu)), prep: JSON.parse(JSON.stringify(defaultPrep)) };
       }
+      setBadge('✦ 已連線');
     }
-    loaded = true;
     applyMeta(); renderMenu(); renderPrep();
     startListening();
-  }).catch(()=>{
-    // Firebase 連不上，用 localStorage
-    loaded = true;
+  }).catch(() => {
     try{
-      const cached = localStorage.getItem(SK);
-      if(cached){ state = JSON.parse(cached); }
-      else { state.menu = JSON.parse(JSON.stringify(defaultMenu)); state.prep = JSON.parse(JSON.stringify(defaultPrep)); }
-    }catch(e){ state.menu = JSON.parse(JSON.stringify(defaultMenu)); state.prep = JSON.parse(JSON.stringify(defaultPrep)); }
-    setBadge('📱 離線模式（本機儲存）');
+      const cached = localStorage.getItem(currentTripId);
+      if(cached) state = JSON.parse(cached);
+      else state = { meta:{start:'',end:'',loc:'',ppl:''}, menu: JSON.parse(JSON.stringify(defaultMenu)), prep: JSON.parse(JSON.stringify(defaultPrep)) };
+    }catch(e){}
+    setBadge('📱 離線模式');
     applyMeta(); renderMenu(); renderPrep();
   });
 }
 
-/* 監聽其他裝置的更新 */
 function startListening(){
+  if(listenerOff){ listenerOff(); }
   let firstCall = true;
-  REF.on('value', snap => {
-    // 第一次呼叫是 Firebase 自動觸發的，跳過（已在 load() 處理過了）
+  const handler = snap => {
     if(firstCall){ firstCall = false; return; }
     if(isSaving) return;
     const data = snap.val();
     if(!data) return;
     state = data;
-    localStorage.setItem(SK, JSON.stringify(state)); // 同步備份
+    localStorage.setItem(currentTripId, JSON.stringify(state));
     isRemoteUpdate = true;
     applyMeta(); renderMenu(); renderPrep();
     isRemoteUpdate = false;
     setBadge('✦ 已同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
     showToast('✦ 資料已更新');
-  });
+  };
+  currentREF.on('value', handler);
+  listenerOff = () => currentREF.off('value', handler);
 }
 
 function save(){
-  if(isRemoteUpdate) return;
+  if(isRemoteUpdate || !currentREF) return;
   isSaving = true;
   collectMeta();
-  // 同時存 Firebase + localStorage（雙重保險）
-  localStorage.setItem(SK, JSON.stringify(state));
-  REF.set(state).then(()=>{
+  localStorage.setItem(currentTripId, JSON.stringify(state));
+  currentREF.set(state).then(() => {
     const t = new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
     setBadge('已儲存並同步 ✦ ' + t);
     showToast('已儲存並同步 ✦');
     isSaving = false;
-  }).catch(()=>{
-    // Firebase 失敗，至少 localStorage 有存
-    setBadge('📱 已存本機（雲端暫時無法連線）');
+  }).catch(() => {
+    setBadge('📱 已存本機');
     showToast('已存本機備份');
     isSaving = false;
   });
 }
 
-function setBadge(msg){ document.getElementById('saveBadge').textContent = msg; }
+function setBadge(msg){ const el=document.getElementById('saveBadge'); if(el) el.textContent=msg; }
 function scheduleSync(){ if(isRemoteUpdate) return; clearTimeout(syncTimer); syncTimer = setTimeout(save, 1500); }
 function saveNow(){ collectMeta(); save(); }
 
@@ -481,7 +626,7 @@ function copyLine(){
 
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; setTimeout(()=>{ t.textContent=''; },3000); }
 
-load();
+init();
 </script>
 </body>
 </html>
