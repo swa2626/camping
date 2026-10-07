@@ -78,7 +78,7 @@ a{color:var(--forest)}
 label.field{display:block;margin-top:14px}
 label.field>span{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
 label.field>span em{font-style:normal;color:var(--muted);font-weight:400}
-input[type=text],input[type=number],input[type=date],input[type=url],textarea{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;outline:none;min-height:46px}
+input[type=text],input[type=password],input[type=number],input[type=date],input[type=url],textarea{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;outline:none;min-height:46px}
 input:focus,textarea:focus{border-color:var(--forest-2);box-shadow:0 0 0 3px var(--forest-soft)}
 textarea{resize:vertical;min-height:90px}
 
@@ -156,16 +156,44 @@ textarea{resize:vertical;min-height:90px}
   <div id="vCreate" class="hidden">
     <a href="./" class="backhome">← 回露營小站</a>
     <div class="hero">
-      <span class="tag">⛺ 團主專區</span>
-      <h1>開一團新的露營</h1>
-      <div class="meta"><span>先取個名字，其他（日期、方案、地圖、備註）下一步再慢慢填。</span></div>
+      <span class="tag">🔑 團主總後台</span>
+      <h1 id="mHeroTitle">我的露營揪團</h1>
+      <div class="meta"><span id="mHeroSub">所有開過的團都在這裡</span></div>
     </div>
-    <div class="card">
-      <label class="field"><span>活動名稱</span>
-        <input type="text" id="cTitle" placeholder="例如：11月 熊愛露營團" maxlength="60">
-      </label>
-      <button class="btn btn-primary btn-block mt16" id="cGo">建立活動 →</button>
-      <p class="sub mt12">建立後會給你兩個連結：一個「報名連結」給朋友，一個「團主後台」自己留著。</p>
+
+    <!-- 第一次：設定密碼 -->
+    <div id="mSetup" class="hidden card">
+      <h2>🔐 設定團主密碼</h2>
+      <p class="sub" style="margin-top:-6px">第一次使用，請設定一組密碼。之後在任何手機、電腦打開這頁，輸入密碼就能管理所有的團。請記在 LINE 記事本喔！</p>
+      <label class="field"><span>團主密碼 <em>（至少 4 碼）</em></span><input type="password" id="mPw1" maxlength="30" autocomplete="new-password" inputmode="text"></label>
+      <label class="field"><span>再輸入一次</span><input type="password" id="mPw2" maxlength="30" autocomplete="new-password"></label>
+      <button class="btn btn-primary btn-block mt16" id="mSetGo">設定完成 →</button>
+    </div>
+
+    <!-- 登入 -->
+    <div id="mLogin" class="hidden card">
+      <h2>🔐 輸入團主密碼</h2>
+      <p class="sub" style="margin-top:-6px">這一台裝置輸入過一次，之後就會自動記住。</p>
+      <label class="field"><span>團主密碼</span><input type="password" id="mPw" maxlength="30" autocomplete="current-password"></label>
+      <button class="btn btn-primary btn-block mt16" id="mLoginGo">進入總後台 →</button>
+      <p class="sub center mt12">朋友報名不需要密碼，他們用的是你分享的報名連結。</p>
+    </div>
+
+    <!-- 總後台 -->
+    <div id="mDash" class="hidden">
+      <div class="card">
+        <h2>➕ 開新的一團</h2>
+        <label class="field" style="margin-top:0"><span>活動名稱</span>
+          <input type="text" id="cTitle" placeholder="例如：11月 熊愛露營團" maxlength="60">
+        </label>
+        <button class="btn btn-primary btn-block mt12" id="cGo">建立活動 →</button>
+        <p class="sub mt8">建立後會進到這團的設定頁，填日期、方案、地圖、備註。</p>
+      </div>
+      <div class="card">
+        <h2>📋 我開過的團</h2>
+        <div id="mList"><div class="empty">載入中…</div></div>
+      </div>
+      <button class="btn btn-line btn-block mt16" id="mLogout">這台裝置登出</button>
     </div>
   </div>
 
@@ -231,7 +259,7 @@ textarea{resize:vertical;min-height:90px}
 
   <!-- 團主後台 -->
   <div id="vAdmin" class="hidden">
-    <a href="./" class="backhome">← 回露營小站</a>
+    <a href="signup.html" class="backhome" id="aBack">← 回總後台</a>
     <div class="hero">
       <span class="tag">🔑 團主後台</span>
       <h1 id="aTitle"></h1>
@@ -242,8 +270,7 @@ textarea{resize:vertical;min-height:90px}
       <h2>🔗 分享連結</h2>
       <div class="sub">報名連結（丟到 LINE 群組給大家）</div>
       <div class="linkbox"><code id="aJoinLink"></code><button class="btn btn-primary btn-sm" id="aCopyJoin">複製</button></div>
-      <div class="sub mt12">團主後台連結（<b style="color:var(--danger)">自己留著，不要分享</b>）</div>
-      <div class="linkbox"><code id="aAdminLink"></code><button class="btn btn-ghost btn-sm" id="aCopyAdmin">複製</button></div>
+      <p class="sub mt8">要回來管理這團，打開總後台 <b id="aMasterUrl"></b> 就找得到。</p>
     </div>
 
     <div class="tabs">
@@ -303,7 +330,7 @@ textarea{resize:vertical;min-height:90px}
       <p class="sub center mt8">儲存後，報名頁會馬上更新。</p>
       <div class="card" style="border-color:#ecc9c5">
         <h2 style="color:var(--danger)">⚠️ 危險區</h2>
-        <button class="btn btn-danger btn-block" id="fNew">再開一團新的活動</button>
+        <button class="btn btn-danger btn-block" id="fDelete">🗑️ 刪除這一團（含所有報名資料）</button>
       </div>
     </div>
   </div>
@@ -354,12 +381,23 @@ function itemsText(e){ return Object.values(e.items||{}).filter(i=>i.qty>0).map(
 
 /* ══ 網址參數 ══ */
 const P = new URLSearchParams(location.search);
-const EID = P.get('e'), KEY = P.get('k'), RID = P.get('r'), TOK = P.get('t');
+const EID = P.get('e'), KEY = P.get('k'), RID = P.get('r'), TOK = P.get('t'), VIA_MASTER = P.get('m') === '1';
 let INFO = null, ENTRIES = {};
+
+/* ══ 團主密碼（總後台）══ */
+const CONFIG = 'camp-signup/config';
+const MASTER_LS = 'camp-signup-master';
+const pwHash = pw => sha('camp-signup:' + pw);
+function localMaster(){ try{ return localStorage.getItem(MASTER_LS); }catch(e){ return null; } }
+function saveLocalMaster(h){ try{ localStorage.setItem(MASTER_LS, h); }catch(e){} }
+async function masterOk(){
+  const h = localMaster(); if(!h) return false;
+  try{ const s = await db.ref(`${CONFIG}/masterHash`).get(); return !!s.val() && s.val() === h; }catch(e){ return false; }
+}
 
 /* ══ 啟動 ══ */
 (async function init(){
-  if(!EID){ show('vCreate'); return; }
+  if(!EID){ startMaster(); return; }
   if(!/^[a-z0-9]{4,20}$/.test(EID)){ fail('找不到這個活動','連結可能打錯了，請跟團主確認一下喔。'); return; }
   try{
     const snap = await db.ref(`${ROOT}/${EID}/info`).get();
@@ -367,29 +405,113 @@ let INFO = null, ENTRIES = {};
   }catch(e){ fail('連線失敗','網路好像不太穩，請重新整理再試一次。'); return; }
   if(!INFO){ fail('找不到這個活動','連結可能打錯了，或活動已經被刪除。'); return; }
 
-  if(KEY){
-    if(await sha(KEY) !== INFO.keyHash){ fail('後台連結不正確','這個連結的鑰匙對不上，請確認是不是完整複製。'); return; }
-    startAdmin();
+  if(KEY || VIA_MASTER){
+    const keyOk = KEY && INFO.keyHash && (await sha(KEY)) === INFO.keyHash;
+    if(keyOk || await masterOk()){ startAdmin(); }
+    else{ location.href = baseUrl(); }   // 沒權限 → 回總後台登入
   }else{
     startJoin();
   }
 })();
 
+/* ══ 總後台 ══ */
+async function startMaster(){
+  show('vCreate');
+  let hash = null;
+  try{ hash = (await db.ref(`${CONFIG}/masterHash`).get()).val(); }
+  catch(e){ fail('連線失敗','網路好像不太穩，請重新整理再試一次。'); return; }
+  if(!hash){ $('mSetup').classList.remove('hidden'); $('mHeroSub').textContent = '先設定一組團主密碼'; return; }
+  if(localMaster() === hash){ openDash(); return; }
+  $('mLogin').classList.remove('hidden');
+  $('mHeroSub').textContent = '輸入密碼就能管理所有的團';
+  setTimeout(()=>$('mPw').focus(), 50);
+}
+$('mSetGo').onclick = async () => {
+  const a = $('mPw1').value, b = $('mPw2').value;
+  if(a.length < 4){ toast('密碼至少要 4 碼'); return; }
+  if(a !== b){ toast('兩次輸入的密碼不一樣'); return; }
+  $('mSetGo').disabled = true;
+  try{
+    const ex = (await db.ref(`${CONFIG}/masterHash`).get()).val();
+    if(ex){ toast('已經有密碼了，請用登入'); location.reload(); return; }
+    const h = await pwHash(a);
+    await db.ref(`${CONFIG}/masterHash`).set(h);
+    saveLocalMaster(h);
+    $('mSetup').classList.add('hidden'); openDash(); toast('密碼設定完成 ✓');
+  }catch(e){ toast('設定失敗，請再試一次'); }
+  $('mSetGo').disabled = false;
+};
+$('mLoginGo').onclick = async () => {
+  const pw = $('mPw').value; if(!pw){ toast('請輸入密碼'); return; }
+  $('mLoginGo').disabled = true;
+  try{
+    const h = await pwHash(pw);
+    const ex = (await db.ref(`${CONFIG}/masterHash`).get()).val();
+    if(h === ex){ saveLocalMaster(h); $('mLogin').classList.add('hidden'); openDash(); }
+    else{ toast('密碼不對喔，再試一次'); $('mPw').select(); }
+  }catch(e){ toast('連線失敗，請再試一次'); }
+  $('mLoginGo').disabled = false;
+};
+$('mPw').addEventListener('keydown', e=>{ if(e.key==='Enter') $('mLoginGo').click(); });
+$('mLogout').onclick = () => { if(confirm('要讓這台裝置登出嗎？下次進來要再輸入密碼。')){ try{ localStorage.removeItem(MASTER_LS); }catch(e){} location.reload(); } };
+
+let MASTER_EVENTS = {};
+function openDash(){
+  $('mDash').classList.remove('hidden');
+  $('mHeroSub').textContent = '所有開過的團都在這裡';
+  db.ref(ROOT).on('value', s => { MASTER_EVENTS = s.val() || {}; renderDash(); });
+}
+function renderDash(){
+  const list = Object.entries(MASTER_EVENTS).filter(([id,ev])=>ev && ev.info).map(([id,ev])=>{
+    const en = entriesArr(ev.entries);
+    return { id, info: ev.info, groups: en.length, people: en.reduce((s,e)=>s+(e.people||0),0), total: en.reduce((s,e)=>s+(e.total||0),0) };
+  }).sort((a,b)=>(b.info.createdAt||0)-(a.info.createdAt||0));
+  if(!list.length){ $('mList').innerHTML = '<div class="empty"><div class="ico">🏕️</div>還沒有開過團<br><span class="sub">在上面輸入活動名稱，開第一團吧！</span></div>'; return; }
+  $('mList').innerHTML = list.map(x=>`
+    <div class="entry" data-id="${esc(x.id)}">
+      <div class="entry-top">
+        <div class="entry-name">${esc(x.info.title)}</div>
+        <div class="entry-amt">${money(x.total)}</div>
+      </div>
+      <div class="entry-items">📅 ${esc(fmtRange(x.info.dateStart, x.info.dateEnd))}　${x.info.open===false?'🔒 已截止':'🟢 報名中'}</div>
+      <div class="entry-note">${x.groups} 組報名 · 共 ${x.people} 人</div>
+      <div class="entry-foot">
+        <a class="btn btn-primary btn-sm" href="${esc(baseUrl()+'?e='+x.id+'&m=1')}">進入後台 →</a>
+        <div class="row">
+          <button class="btn btn-ghost btn-sm" data-act="copy">複製報名連結</button>
+          <button class="btn btn-danger btn-sm" data-act="del">刪除</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+$('mList').addEventListener('click', async e=>{
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const id = b.closest('.entry').dataset.id; const ev = MASTER_EVENTS[id]; if(!ev) return;
+  if(b.dataset.act === 'copy') copy(`${baseUrl()}?e=${id}`);
+  if(b.dataset.act === 'del') await deleteEvent(id, ev.info.title);
+});
+async function deleteEvent(id, title){
+  if(!confirm(`確定要刪除「${title}」嗎？\n這團的設定和所有報名資料都會一起刪掉，救不回來喔。`)) return false;
+  try{ await db.ref(`${ROOT}/${id}`).remove(); toast('已刪除'); return true; }
+  catch(e){ toast('刪除失敗，請再試一次'); return false; }
+}
+
 /* ══ 建立新活動 ══ */
 $('cGo').onclick = async () => {
   const title = $('cTitle').value.trim();
   if(!title){ toast('請先取個活動名稱'); $('cTitle').focus(); return; }
+  if(!(await masterOk())){ toast('請先登入總後台'); location.reload(); return; }
   $('cGo').disabled = true;
-  const id = rid(8), key = rid(16);
+  const id = rid(8);
   const p1 = 'p'+rid(6), p2 = 'p'+rid(6);
   const info = {
     title, dateStart:'', dateEnd:'', place:'', mapUrl:'', notes:'', open:true,
     plans: { [p1]:{name:'夜衝＋一晚',price:1600,order:1}, [p2]:{name:'一晚',price:1200,order:2} },
-    keyHash: await sha(key), createdAt: Date.now()
+    createdAt: Date.now()
   };
   try{
     await db.ref(`${ROOT}/${id}/info`).set(info);
-    location.href = `${baseUrl()}?e=${id}&k=${key}#set`;
+    location.href = `${baseUrl()}?e=${id}&m=1#set`;
   }catch(e){ $('cGo').disabled=false; toast('建立失敗，請再試一次'); }
 };
 $('cTitle').addEventListener('keydown', e=>{ if(e.key==='Enter') $('cGo').click(); });
@@ -553,9 +675,9 @@ function startAdmin(){
   show('vAdmin');
   const joinLink = `${baseUrl()}?e=${EID}`;
   $('aJoinLink').textContent = joinLink;
-  $('aAdminLink').textContent = `${baseUrl()}?e=${EID}&k=${KEY}`;
+  $('aMasterUrl').textContent = baseUrl().replace(/^https?:\/\//,'');
+  $('aBack').href = baseUrl();
   $('aCopyJoin').onclick = () => copy(joinLink);
-  $('aCopyAdmin').onclick = () => copy($('aAdminLink').textContent);
   let first = true;
   db.ref(`${ROOT}/${EID}/info`).on('value', s => {
     if(!s.val()) return; INFO = s.val();
@@ -679,7 +801,7 @@ $('fSave').onclick = async () => {
   }catch(e){ toast('儲存失敗，請再試一次'); }
   $('fSave').disabled = false;
 };
-$('fNew').onclick = () => { if(confirm('要開一團全新的活動嗎？（這團的資料會保留，用原本的後台連結還是能進來）')) location.href = baseUrl(); };
+$('fDelete').onclick = async () => { if(await deleteEvent(EID, INFO.title)) location.href = baseUrl(); };
 </script>
 </body>
 </html>
