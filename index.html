@@ -1,632 +1,74 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>露營菜單 🏕️</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>露營小站 ⛺</title>
+<meta name="description" content="露營菜單 LIST 與揪團報名表">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#f5f0e8;min-height:100vh;font-family:'Noto Serif TC',serif;color:#3a3028;background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(180,160,120,0.12) 28px),repeating-linear-gradient(90deg,transparent,transparent 27px,rgba(180,160,120,0.06) 28px);}
-.paper{max-width:680px;margin:0 auto;background:#faf7f0;min-height:100vh;padding:2rem 2rem 4rem;box-shadow:2px 0 8px rgba(100,80,50,0.08),-2px 0 8px rgba(100,80,50,0.08);position:relative;}
-.paper::before{content:'';position:absolute;left:52px;top:0;bottom:0;width:1px;background:rgba(200,150,120,0.25);pointer-events:none;}
-.stamp{display:inline-block;border:2px solid #8b6f4e;border-radius:2px;padding:4px 10px;font-size:11px;letter-spacing:3px;color:#8b6f4e;margin-bottom:1.2rem;opacity:0.7;}
-h1{font-family:'Shippori Mincho',serif;font-size:26px;font-weight:500;color:#3a3028;letter-spacing:4px;margin-bottom:0.3rem;}
-.subtitle{font-size:12px;color:#9a8878;letter-spacing:2px;margin-bottom:1rem;}
-.save-badge{font-size:10px;letter-spacing:1px;color:#9a8878;text-align:right;margin-bottom:16px;min-height:16px;}
-
-.meta-wrap{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(180,150,110,0.3);}
-.meta-row-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;}
-.meta-field label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:5px;}
-.meta-field input[type="text"]{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);width:100%;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;}
-.meta-field input[type="text"]::placeholder{color:#c5b8a8;}
-.meta-field input[type="text"]:focus{border-bottom-color:#8b6f4e;}
-.meta-date-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.date-field label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:5px;}
-.date-field input[type="date"]{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);width:100%;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;}
-.date-field input[type="date"]:focus{border-bottom-color:#8b6f4e;}
-.date-field input[type="date"]::-webkit-calendar-picker-indicator{opacity:0.4;cursor:pointer;filter:sepia(1) saturate(0.5);}
-.date-display{font-size:11px;color:#8b6f4e;letter-spacing:1px;margin-top:8px;min-height:16px;text-align:center;}
-
-.tabs{display:flex;margin-bottom:1.5rem;border-bottom:1px solid rgba(180,150,110,0.3);}
-.tab{padding:8px 20px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
-.tab.active{color:#5c4a36;border-bottom-color:#8b6f4e;}
-.tab:hover{color:#5c4a36;}
-.panel{display:none;}
-.panel.active{display:block;}
-
-.day-block{margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(180,150,110,0.15);}
-.day-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.day-label-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.3);font-family:'Shippori Mincho',serif;font-size:15px;font-weight:500;letter-spacing:3px;color:#5c4a36;outline:none;padding:3px 0;width:220px;}
-.day-label-input::placeholder{color:#c5b8a8;}
-.day-label-input:focus{border-bottom-color:#8b6f4e;}
-.del-day-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:12px;padding:2px 4px;margin-left:auto;opacity:0;transition:opacity 0.2s;}
-.day-block:hover .del-day-btn{opacity:1;}
-.del-day-btn:hover{color:#8b6f4e;}
-.meal-row{display:grid;grid-template-columns:80px 1fr;align-items:start;gap:8px;margin-bottom:10px;}
-.meal-time-input{background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.2);font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:2px;color:#9a8878;outline:none;padding:3px 0;width:100%;}
-.meal-time-input::placeholder{color:#c5b8a8;}
-.meal-time-input:focus{border-bottom-color:#8b6f4e;}
-.meal-dishes{flex:1;}
-.dish-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.dish-dot{width:5px;height:5px;border:1px solid #8b6f4e;border-radius:50%;flex-shrink:0;opacity:0.5;}
-.dish-input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.1);font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;outline:none;letter-spacing:1px;padding:2px 0;}
-.dish-input::placeholder{color:#c5b8a8;font-size:12px;}
-.dish-input:focus{border-bottom-color:#8b6f4e;background:rgba(180,150,110,0.04);}
-.del-dish-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:12px;padding:2px;opacity:0;transition:opacity 0.2s;}
-.dish-row:hover .del-dish-btn,.gear-item-row:hover .del-dish-btn{opacity:1;}
-.del-dish-btn:hover{color:#8b6f4e;}
-.meal-actions{display:flex;gap:12px;margin-top:4px;}
-.small-add{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#9a8878;cursor:pointer;padding:2px 0;}
-.small-add:hover{color:#5c4a36;}
-.del-meal-btn{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#c5b8a8;cursor:pointer;padding:2px 0;}
-.del-meal-btn:hover{color:#8b6f4e;}
-.add-meal-btn{display:flex;align-items:center;gap:8px;width:100%;padding:6px 0;background:transparent;border:none;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-bottom:2px;opacity:0.7;transition:opacity 0.2s;}
-.add-meal-btn:hover{opacity:1;color:#5c4a36;}
-.add-meal-line{flex:1;height:1px;background:rgba(180,150,110,0.15);}
-.add-day-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px dashed rgba(180,150,110,0.35);border-radius:2px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-top:8px;transition:all 0.2s;}
-.add-day-btn:hover{background:rgba(180,150,110,0.07);color:#5c4a36;}
-
-.progress-label{font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:6px;}
-.progress-bar{height:3px;background:rgba(180,150,110,0.2);border-radius:2px;margin-bottom:1.2rem;overflow:hidden;}
-.progress-fill{height:100%;background:#8b6f4e;border-radius:2px;transition:width 0.4s;}
-.gear-section{margin-bottom:1.8rem;}
-.gear-section-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.gear-section-title{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.25);font-family:'Noto Serif TC',serif;font-size:14px;letter-spacing:2px;color:#5c4a36;font-weight:500;padding-bottom:3px;outline:none;}
-.gear-section-title::placeholder{color:#c5b8a8;}
-.gear-section-title:focus{border-bottom-color:#8b6f4e;}
-.del-section-btn{background:none;border:none;cursor:pointer;color:#c5b8a8;font-size:13px;padding:2px 4px;opacity:0;transition:opacity 0.2s;}
-.gear-section:hover .del-section-btn{opacity:1;}
-.del-section-btn:hover{color:#8b6f4e;}
-.gear-item-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(180,150,110,0.1);}
-.gear-item-row:last-child{border-bottom:none;}
-.gear-cb{width:16px;height:16px;flex-shrink:0;border:1px solid rgba(180,150,110,0.5);border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-left:2px;}
-.gear-cb.checked{background:#8b6f4e;border-color:#8b6f4e;}
-.gear-cb.checked::after{content:'✓';color:#faf7f0;font-size:10px;line-height:1;}
-.gear-item-input{flex:1;background:transparent;border:none;font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;outline:none;letter-spacing:1px;padding:2px 0;transition:color 0.2s;}
-.gear-item-input.checked{color:#b8a88a;text-decoration:line-through;}
-.gear-item-input::placeholder{color:#c5b8a8;font-size:12px;}
-.add-gear-item{display:flex;align-items:center;gap:8px;padding:4px 0;margin-top:2px;cursor:pointer;opacity:0.45;transition:opacity 0.2s;}
-.add-gear-item:hover{opacity:0.9;}
-.add-gear-item span{font-size:12px;letter-spacing:2px;color:#8b6f4e;}
-.add-gear-line{flex:1;height:1px;background:rgba(180,150,110,0.2);}
-.add-section-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;background:transparent;border:1px dashed rgba(180,150,110,0.35);border-radius:2px;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;margin-top:8px;transition:all 0.2s;}
-.add-section-btn:hover{background:rgba(180,150,110,0.07);color:#5c4a36;}
-
-.divider{text-align:center;margin:1.5rem 0;color:rgba(180,150,110,0.4);font-size:13px;letter-spacing:6px;}
-.actions{display:flex;gap:10px;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(180,150,110,0.2);}
-.btn{flex:1;padding:10px;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all 0.2s;}
-.btn-outline{background:transparent;border:1px solid #8b6f4e;color:#8b6f4e;}
-.btn-outline:hover{background:#8b6f4e;color:#faf7f0;}
-.btn-solid{background:#5c4a36;border:1px solid #5c4a36;color:#faf7f0;}
-.btn-solid:hover{background:#3a3028;}
-.toast{text-align:center;margin-top:10px;font-size:12px;letter-spacing:2px;color:#8b6f4e;min-height:18px;}
-
-/* ── 首頁（選擇露營）── */
-#home-screen{display:block;}
-#trip-screen{display:none;}
-.home-title{font-family:'Shippori Mincho',serif;font-size:24px;font-weight:500;color:#3a3028;letter-spacing:4px;margin-bottom:0.3rem;}
-.home-sub{font-size:12px;color:#9a8878;letter-spacing:2px;margin-bottom:2rem;}
-.new-trip-box{border:1px dashed rgba(180,150,110,0.5);border-radius:4px;padding:1.2rem;margin-bottom:2rem;}
-.new-trip-box label{font-size:11px;letter-spacing:2px;color:#9a8878;display:block;margin-bottom:6px;}
-.new-trip-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;}
-.new-trip-row input{flex:1;background:transparent;border:none;border-bottom:1px solid rgba(180,150,110,0.4);font-family:'Noto Serif TC',serif;font-size:13px;color:#3a3028;padding:4px 0;outline:none;}
-.new-trip-row input::placeholder{color:#c5b8a8;}
-.new-trip-row input:focus{border-bottom-color:#8b6f4e;}
-.btn-create{padding:8px 20px;background:#5c4a36;border:none;border-radius:2px;font-family:'Noto Serif TC',serif;font-size:13px;letter-spacing:2px;color:#faf7f0;cursor:pointer;white-space:nowrap;}
-.btn-create:hover{background:#3a3028;}
-.trips-list{margin-top:0.5rem;}
-.trips-list-title{font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:10px;}
-.trip-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(180,150,110,0.12);cursor:pointer;}
-.trip-item:last-child{border-bottom:none;}
-.trip-item:hover .trip-name{color:#5c4a36;}
-.trip-dot{width:6px;height:6px;border:1px solid #8b6f4e;border-radius:50%;flex-shrink:0;opacity:0.5;}
-.trip-name{flex:1;font-size:14px;letter-spacing:1px;color:#3a3028;transition:color 0.2s;}
-.trip-date{font-size:11px;color:#b8a88a;letter-spacing:1px;}
-.trip-del{background:none;border:none;color:#c5b8a8;font-size:12px;cursor:pointer;padding:2px 6px;opacity:0;transition:opacity 0.2s;}
-.trip-item:hover .trip-del{opacity:1;}
-.trip-del:hover{color:#8b6f4e;}
-.back-btn{background:none;border:none;font-family:'Noto Serif TC',serif;font-size:12px;letter-spacing:2px;color:#9a8878;cursor:pointer;padding:0;margin-bottom:1.2rem;display:flex;align-items:center;gap:6px;}
-.back-btn:hover{color:#5c4a36;}
-.share-row{display:flex;gap:8px;align-items:center;margin-top:6px;}
-.share-url{flex:1;font-size:11px;color:#9a8878;letter-spacing:0.5px;word-break:break-all;background:rgba(180,150,110,0.08);padding:6px 8px;border-radius:2px;}
-.btn-copy-url{background:none;border:1px solid rgba(180,150,110,0.4);border-radius:2px;padding:4px 10px;font-family:'Noto Serif TC',serif;font-size:11px;letter-spacing:1px;color:#8b6f4e;cursor:pointer;white-space:nowrap;}
-.btn-copy-url:hover{background:#8b6f4e;color:#faf7f0;}
-.empty-msg{font-size:12px;color:#c5b8a8;letter-spacing:1px;text-align:center;padding:1rem 0;}
+:root{--bg:#f4efe4;--card:#fffdf8;--ink:#2b2a25;--muted:#7a7466;--line:#e4dccb;--forest:#2f5d46;--ember:#d9682b;--shadow:0 1px 2px rgba(60,50,30,.06),0 6px 20px rgba(60,50,30,.08)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+.hero{position:relative;overflow:hidden;border-radius:24px;padding:34px 22px 110px;color:#fff;
+  background:linear-gradient(180deg,#1f3d31 0%,#2f5d46 60%,#3f7a5c 100%);box-shadow:var(--shadow)}
+.hero .stars{position:absolute;inset:0;background-image:
+  radial-gradient(1.5px 1.5px at 20% 22%,rgba(255,255,255,.8),transparent),
+  radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.7),transparent),
+  radial-gradient(1.5px 1.5px at 85% 35%,rgba(255,255,255,.6),transparent),
+  radial-gradient(1px 1px at 40% 10%,rgba(255,255,255,.6),transparent),
+  radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.5),transparent)}
+.hero .moon{position:absolute;right:26px;top:24px;width:34px;height:34px;border-radius:50%;background:#f6e7c1;box-shadow:0 0 24px rgba(246,231,193,.5)}
+.hero .tag{position:relative;display:inline-block;font-size:13px;font-weight:700;letter-spacing:.12em;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:99px}
+.hero h1{position:relative;margin:14px 0 6px;font-size:30px;font-weight:900;line-height:1.2}
+.hero p{position:relative;margin:0;opacity:.85}
+.hero svg{position:absolute;left:0;right:0;bottom:0;width:100%;height:96px;display:block}
+.cards{display:grid;gap:14px;margin-top:-50px;position:relative;padding:0 6px}
+.card{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 18px;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .12s}
+.card:active{transform:scale(.98)}
+.card:hover{transform:translateY(-2px)}
+.ico{flex:none;width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-size:30px}
+.ico.a{background:#f3e7d3}
+.ico.b{background:#e3eee6}
+.txt{flex:1;min-width:0}
+.txt h2{margin:0;font-size:20px;font-weight:900}
+.txt h2 small{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-left:6px}
+.txt p{margin:4px 0 0;color:var(--muted);font-size:14px;line-height:1.5}
+.arrow{flex:none;font-size:22px;color:var(--forest);font-weight:900}
+.foot{text-align:center;color:var(--muted);font-size:13px;margin-top:26px}
 </style>
 </head>
 <body>
-<div class="paper">
-
-<!-- ══ 首頁：選擇露營 ══ -->
-<div id="home-screen">
-  <div class="stamp">CAMP · JOURNAL</div>
-  <div class="home-title">露營菜單</div>
-  <p class="home-sub">みんなで一緒に編集できます</p>
-
-  <div class="new-trip-box">
-    <label>建立新的露營清單</label>
-    <div class="new-trip-row">
-      <input type="text" id="new-trip-name" placeholder="露營名稱（例：六月武陵露營）" />
-      <button class="btn-create" onclick="createTrip()">建立</button>
-    </div>
+<div class="wrap">
+  <div class="hero">
+    <div class="stars"></div><div class="moon"></div>
+    <span class="tag">⛺ CAMPING</span>
+    <h1>露營小站</h1>
+    <p>菜單備料、揪團報名，一站搞定</p>
+    <svg viewBox="0 0 400 96" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 96 L0 62 L60 22 L110 58 L170 10 L240 64 L300 30 L350 56 L400 36 L400 96 Z" fill="rgba(255,255,255,.08)"/>
+      <path d="M0 96 L0 76 L80 50 L150 78 L230 44 L310 80 L400 60 L400 96 Z" fill="rgba(0,0,0,.12)"/>
+    </svg>
   </div>
 
-  <div class="trips-list">
-    <div class="trips-list-title">我的露營清單</div>
-    <div id="trips-container"><div class="empty-msg">尚無清單，建立第一個吧！</div></div>
+  <div class="cards">
+    <a class="card" href="list.html">
+      <div class="ico a">🍳</div>
+      <div class="txt"><h2>露營 LIST<small>MENU</small></h2><p>規劃每一餐菜單和備料清單，和露友一起編輯</p></div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="card" href="signup.html">
+      <div class="ico b">📝</div>
+      <div class="txt"><h2>報名表<small>SIGN UP</small></h2><p>開一團露營，朋友點連結就能選方案報名</p></div>
+      <div class="arrow">›</div>
+    </a>
   </div>
+
+  <p class="foot">🌲 好天氣、好營地、好夥伴</p>
 </div>
-
-<!-- ══ 清單頁：填寫菜單 ══ -->
-<div id="trip-screen">
-  <button class="back-btn" onclick="goHome()">← 返回清單</button>
-  <div class="stamp">CAMP · JOURNAL</div>
-  <h1>露營菜單</h1>
-  <p class="subtitle">みんなで一緒に編集できます</p>
-  <div class="save-badge" id="saveBadge">讀取中...</div>
-
-  <div class="meta-wrap">
-    <div class="meta-row-top">
-      <div class="meta-field">
-        <label>地　點</label>
-        <input type="text" id="f-loc" placeholder="武陵農場" oninput="scheduleSync()"/>
-      </div>
-      <div class="meta-field">
-        <label>人　數</label>
-        <input type="text" id="f-ppl" placeholder="6 人" oninput="scheduleSync()"/>
-      </div>
-    </div>
-    <div class="meta-date-row">
-      <div class="date-field">
-        <label>開始日期</label>
-        <input type="date" id="f-start" oninput="onDateChange()"/>
-      </div>
-      <div class="date-field">
-        <label>結束日期</label>
-        <input type="date" id="f-end" oninput="onDateChange()"/>
-      </div>
-    </div>
-    <div class="date-display" id="date-display"></div>
-  </div>
-
-  <div style="margin-bottom:1.5rem;">
-    <div style="font-size:11px;letter-spacing:2px;color:#9a8878;margin-bottom:6px;">分享此清單給夥伴</div>
-    <div class="share-row">
-      <div class="share-url" id="share-url"></div>
-      <button class="btn-copy-url" onclick="copyShareUrl()">複製連結</button>
-    </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('menu',this)">菜單規劃</button>
-    <button class="tab" onclick="switchTab('prep',this)">準備清單</button>
-  </div>
-
-  <div id="panel-menu" class="panel active">
-    <div id="menu-container"></div>
-    <button class="add-day-btn" onclick="addDay()">＋ 新增一天</button>
-  </div>
-
-  <div id="panel-prep" class="panel">
-    <div class="progress-label" id="prog-label"></div>
-    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
-    <div id="prep-container"></div>
-    <button class="add-section-btn" onclick="addSection()">＋ 新增分類</button>
-  </div>
-
-  <div class="actions">
-    <button class="btn btn-outline" onclick="copyLine()">複製 → LINE</button>
-    <button class="btn btn-solid" onclick="saveNow()">儲存</button>
-  </div>
-  <div class="toast" id="toast"></div>
-  <div class="divider">— ✦ —</div>
-  <p style="font-size:11px;color:#c5b8a8;text-align:center;letter-spacing:2px;">分享連結給夥伴，所有裝置即時同步 ✦</p>
-</div>
-
-</div>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-<script>
-/* ══ Firebase 設定 ══ */
-const firebaseConfig = {
-  databaseURL: 'https://campfood-list-default-rtdb.asia-southeast1.firebasedatabase.app'
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-/* ══ 狀態 ══ */
-let currentTripId = null;
-let currentREF = null;
-let state = { meta:{start:'',end:'',loc:'',ppl:''}, menu:[], prep:[] };
-let syncTimer = null, ctr = 100, isSaving = false, isRemoteUpdate = false;
-let listenerOff = null;
-
-function uid(){ return 'x'+(++ctr)+Math.floor(Math.random()*9999); }
-
-const defaultMenu = [{id:uid(),label:'',meals:[
-  {id:uid(),time:'',dishes:['']},
-  {id:uid(),time:'',dishes:['']},
-  {id:uid(),time:'',dishes:['']}
-]}];
-const defaultPrep = [
-  {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]},
-  {id:uid(),title:'',items:[{id:uid(),text:'',checked:false},{id:uid(),text:'',checked:false}]}
-];
-
-/* ══ 首頁邏輯 ══ */
-function init(){
-  // 如果網址有 ?id=xxx，直接進入那份清單
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if(id){
-    openTrip(id);
-  } else {
-    showHome();
-  }
-}
-
-function showHome(){
-  document.getElementById('home-screen').style.display = 'block';
-  document.getElementById('trip-screen').style.display = 'none';
-  loadTripList();
-}
-
-function goHome(){
-  if(listenerOff){ listenerOff(); listenerOff = null; }
-  currentTripId = null; currentREF = null;
-  history.pushState({}, '', window.location.pathname);
-  showHome();
-}
-
-function loadTripList(){
-  const listRef = db.ref('trip-index');
-  listRef.once('value').then(snap => {
-    const data = snap.val();
-    const container = document.getElementById('trips-container');
-    if(!data){
-      container.innerHTML = '<div class="empty-msg">尚無清單，建立第一個吧！</div>';
-      return;
-    }
-    const trips = Object.entries(data).sort((a,b) => b[1].createdAt - a[1].createdAt);
-    container.innerHTML = '';
-    trips.forEach(([id, info]) => {
-      const item = document.createElement('div');
-      item.className = 'trip-item';
-      const dot = document.createElement('span'); dot.className = 'trip-dot';
-      const name = document.createElement('span'); name.className = 'trip-name'; name.textContent = info.name || '未命名清單';
-      const date = document.createElement('span'); date.className = 'trip-date';
-      date.textContent = new Date(info.createdAt).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'}) + ' 建立';
-      const del = document.createElement('button'); del.className = 'trip-del'; del.textContent = '✕';
-      del.onclick = (e) => { e.stopPropagation(); deleteTrip(id, info.name); };
-      item.onclick = () => openTrip(id);
-      item.appendChild(dot); item.appendChild(name); item.appendChild(date); item.appendChild(del);
-      container.appendChild(item);
-    });
-  });
-}
-
-function createTrip(){
-  const nameInput = document.getElementById('new-trip-name');
-  const name = nameInput.value.trim() || '新露營清單';
-  const id = 'trip-' + Date.now();
-  const info = { name, createdAt: Date.now() };
-  db.ref('trip-index/' + id).set(info).then(() => {
-    nameInput.value = '';
-    openTrip(id);
-  });
-}
-
-function deleteTrip(id, name){
-  if(!confirm(`確定要刪除「${name}」？\n這個動作無法復原。`)) return;
-  db.ref('trip-index/' + id).remove();
-  db.ref('trips/' + id).remove();
-  loadTripList();
-}
-
-function openTrip(id){
-  currentTripId = id;
-  currentREF = db.ref('trips/' + id);
-  history.pushState({}, '', '?id=' + id);
-  document.getElementById('home-screen').style.display = 'none';
-  document.getElementById('trip-screen').style.display = 'block';
-  // 顯示分享網址
-  const url = window.location.href;
-  document.getElementById('share-url').textContent = url;
-  loadTrip();
-}
-
-function copyShareUrl(){
-  const url = document.getElementById('share-url').textContent;
-  navigator.clipboard.writeText(url).then(() => showToast('連結已複製！貼到 LINE 分享給夥伴 ✦'));
-}
-
-/* ══ 清單讀取與同步 ══ */
-function loadTrip(){
-  setBadge('連線中...');
-  // 先從 localStorage 讀快取
-  try{
-    const cached = localStorage.getItem(currentTripId);
-    if(cached){ state = JSON.parse(cached); applyMeta(); renderMenu(); renderPrep(); }
-  }catch(e){}
-
-  currentREF.once('value').then(snap => {
-    const data = snap.val();
-    if(data){
-      state = data;
-      localStorage.setItem(currentTripId, JSON.stringify(state));
-      setBadge('✦ 雲端同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
-    } else {
-      const cached = localStorage.getItem(currentTripId);
-      if(cached){ state = JSON.parse(cached); }
-      else {
-        state = { meta:{start:'',end:'',loc:'',ppl:''}, menu: JSON.parse(JSON.stringify(defaultMenu)), prep: JSON.parse(JSON.stringify(defaultPrep)) };
-      }
-      setBadge('✦ 已連線');
-    }
-    applyMeta(); renderMenu(); renderPrep();
-    startListening();
-  }).catch(() => {
-    try{
-      const cached = localStorage.getItem(currentTripId);
-      if(cached) state = JSON.parse(cached);
-      else state = { meta:{start:'',end:'',loc:'',ppl:''}, menu: JSON.parse(JSON.stringify(defaultMenu)), prep: JSON.parse(JSON.stringify(defaultPrep)) };
-    }catch(e){}
-    setBadge('📱 離線模式');
-    applyMeta(); renderMenu(); renderPrep();
-  });
-}
-
-function startListening(){
-  if(listenerOff){ listenerOff(); }
-  let firstCall = true;
-  const handler = snap => {
-    if(firstCall){ firstCall = false; return; }
-    if(isSaving) return;
-    const data = snap.val();
-    if(!data) return;
-    state = data;
-    localStorage.setItem(currentTripId, JSON.stringify(state));
-    isRemoteUpdate = true;
-    applyMeta(); renderMenu(); renderPrep();
-    isRemoteUpdate = false;
-    setBadge('✦ 已同步　' + new Date().toLocaleString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
-    showToast('✦ 資料已更新');
-  };
-  currentREF.on('value', handler);
-  listenerOff = () => currentREF.off('value', handler);
-}
-
-function save(){
-  if(isRemoteUpdate || !currentREF) return;
-  isSaving = true;
-  collectMeta();
-  localStorage.setItem(currentTripId, JSON.stringify(state));
-  currentREF.set(state).then(() => {
-    const t = new Date().toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    setBadge('已儲存並同步 ✦ ' + t);
-    showToast('已儲存並同步 ✦');
-    isSaving = false;
-  }).catch(() => {
-    setBadge('📱 已存本機');
-    showToast('已存本機備份');
-    isSaving = false;
-  });
-}
-
-function setBadge(msg){ const el=document.getElementById('saveBadge'); if(el) el.textContent=msg; }
-function scheduleSync(){ if(isRemoteUpdate) return; clearTimeout(syncTimer); syncTimer = setTimeout(save, 1500); }
-function saveNow(){ collectMeta(); save(); }
-
-/* ── meta ── */
-function formatDate(str){
-  if(!str)return'';
-  const d=new Date(str+'T00:00:00');
-  return`${d.getMonth()+1}月${d.getDate()}號`;
-}
-function onDateChange(){
-  collectMeta();
-  const s=state.meta.start, e=state.meta.end;
-  const disp=document.getElementById('date-display');
-  if(s&&e){
-    const sd=new Date(s+'T00:00:00'),ed=new Date(e+'T00:00:00');
-    if(ed>=sd){ const days=Math.round((ed-sd)/86400000); disp.textContent=`${formatDate(s)} 至 ${formatDate(e)}，共 ${days} 天`; }
-    else disp.textContent='請確認結束日期';
-  } else if(s){ disp.textContent=formatDate(s); }
-  else disp.textContent='';
-  scheduleSync();
-}
-function applyMeta(){
-  document.getElementById('f-start').value=state.meta.start||'';
-  document.getElementById('f-end').value=state.meta.end||'';
-  document.getElementById('f-loc').value=state.meta.loc||'';
-  document.getElementById('f-ppl').value=state.meta.ppl||'';
-  onDateChange();
-}
-function collectMeta(){
-  state.meta.start=document.getElementById('f-start').value;
-  state.meta.end=document.getElementById('f-end').value;
-  state.meta.loc=document.getElementById('f-loc').value;
-  state.meta.ppl=document.getElementById('f-ppl').value;
-}
-function switchTab(tab,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('panel-'+tab).classList.add('active');
-}
-
-/* ── 菜單 ── */
-function renderMenu(){
-  const c=document.getElementById('menu-container'); c.innerHTML='';
-  state.menu.forEach((day,di)=>c.appendChild(buildDayBlock(day,di)));
-}
-function buildDayBlock(day,di){
-  const block=document.createElement('div'); block.className='day-block';
-  const dh=document.createElement('div'); dh.className='day-header';
-  const li=document.createElement('input'); li.className='day-label-input'; li.value=day.label; li.placeholder='第幾天（例：Day 1 · 週五）';
-  li.addEventListener('input',e=>{ state.menu[di].label=e.target.value; scheduleSync(); });
-  const db=document.createElement('button'); db.className='del-day-btn'; db.textContent='✕ 刪除此天';
-  db.addEventListener('click',()=>{ state.menu.splice(di,1); renderMenu(); scheduleSync(); });
-  dh.appendChild(li); dh.appendChild(db); block.appendChild(dh);
-  day.meals.forEach((meal,mi)=>block.appendChild(buildMealRow(meal,di,mi)));
-  const amb=document.createElement('button'); amb.className='add-meal-btn';
-  amb.innerHTML='<div class="add-meal-line"></div><span>＋ 新增餐次</span><div class="add-meal-line"></div>';
-  amb.addEventListener('click',()=>{
-    state.menu[di].meals.push({id:uid(),time:'',dishes:['']});
-    renderMenu(); scheduleSync();
-    setTimeout(()=>{ const ins=document.querySelectorAll('.meal-time-input'); if(ins.length)ins[ins.length-1].focus(); },40);
-  });
-  block.appendChild(amb);
-  return block;
-}
-function buildMealRow(meal,di,mi){
-  const row=document.createElement('div'); row.className='meal-row';
-  const ti=document.createElement('input'); ti.className='meal-time-input'; ti.value=meal.time; ti.placeholder='早餐/午餐...';
-  ti.addEventListener('input',e=>{ state.menu[di].meals[mi].time=e.target.value; scheduleSync(); });
-  const dishes=document.createElement('div'); dishes.className='meal-dishes';
-  meal.dishes.forEach((dish,dsi)=>dishes.appendChild(buildDishRow(dish,di,mi,dsi)));
-  const ma=document.createElement('div'); ma.className='meal-actions';
-  const ab=document.createElement('button'); ab.className='small-add'; ab.textContent='＋ 新增菜色';
-  ab.addEventListener('click',()=>{
-    state.menu[di].meals[mi].dishes.push('');
-    const dr=buildDishRow('',di,mi,state.menu[di].meals[mi].dishes.length-1);
-    dishes.insertBefore(dr,ma);
-    setTimeout(()=>{ const inp=dr.querySelector('input'); if(inp)inp.focus(); },40);
-    scheduleSync();
-  });
-  const mb=document.createElement('button'); mb.className='del-meal-btn'; mb.textContent='刪除此餐';
-  mb.addEventListener('click',()=>{ state.menu[di].meals.splice(mi,1); renderMenu(); scheduleSync(); });
-  ma.appendChild(ab); ma.appendChild(mb); dishes.appendChild(ma);
-  row.appendChild(ti); row.appendChild(dishes);
-  return row;
-}
-function buildDishRow(dish,di,mi,dsi){
-  const dr=document.createElement('div'); dr.className='dish-row';
-  const dot=document.createElement('span'); dot.className='dish-dot';
-  const inp=document.createElement('input'); inp.className='dish-input'; inp.value=dish; inp.placeholder='菜色名稱';
-  inp.addEventListener('input',e=>{
-    if(state.menu[di]&&state.menu[di].meals[mi]) state.menu[di].meals[mi].dishes[dsi]=e.target.value;
-    scheduleSync();
-  });
-  const db2=document.createElement('button'); db2.className='del-dish-btn'; db2.textContent='✕'; db2.setAttribute('aria-label','刪除');
-  db2.addEventListener('click',()=>{ state.menu[di].meals[mi].dishes.splice(dsi,1); renderMenu(); scheduleSync(); });
-  dr.appendChild(dot); dr.appendChild(inp); dr.appendChild(db2);
-  return dr;
-}
-function addDay(){
-  state.menu.push({id:uid(),label:'',meals:[{id:uid(),time:'',dishes:['']}]});
-  renderMenu(); scheduleSync();
-  setTimeout(()=>{ const ins=document.querySelectorAll('.day-label-input'); if(ins.length)ins[ins.length-1].focus(); },40);
-}
-
-/* ── 準備清單 ── */
-function renderPrep(){
-  const c=document.getElementById('prep-container'); c.innerHTML='';
-  updateProgress();
-  state.prep.forEach((sec,si)=>c.appendChild(buildGearSection(sec,si)));
-}
-function updateProgress(){
-  let total=0,done=0;
-  state.prep.forEach(sec=>sec.items.forEach(it=>{ if(it.text.trim()){ total++; if(it.checked)done++; } }));
-  const pct=total>0?Math.round(done/total*100):0;
-  document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('prog-label').textContent=total>0?`已確認 ${done} / ${total} 項　${pct}%`:'';
-}
-function buildGearSection(sec,si){
-  const block=document.createElement('div'); block.className='gear-section';
-  const sh=document.createElement('div'); sh.className='gear-section-header';
-  const ti=document.createElement('input'); ti.className='gear-section-title'; ti.value=sec.title; ti.placeholder='分類名稱（例：食材、炊具）';
-  ti.addEventListener('input',e=>{ state.prep[si].title=e.target.value; scheduleSync(); });
-  const db=document.createElement('button'); db.className='del-section-btn'; db.textContent='✕'; db.setAttribute('aria-label','刪除此分類');
-  db.addEventListener('click',()=>{ state.prep.splice(si,1); renderPrep(); scheduleSync(); });
-  sh.appendChild(ti); sh.appendChild(db); block.appendChild(sh);
-  const list=document.createElement('ul'); list.style.listStyle='none';
-  sec.items.forEach((item,ii)=>list.appendChild(buildGearItem(item,si,ii,list)));
-  block.appendChild(list);
-  const ar=document.createElement('div'); ar.className='add-gear-item';
-  ar.innerHTML='<div class="add-gear-line"></div><span>＋ 新增項目</span><div class="add-gear-line"></div>';
-  ar.addEventListener('click',()=>{
-    const newItem={id:uid(),text:'',checked:false};
-    state.prep[si].items.push(newItem);
-    const row=buildGearItem(newItem,si,state.prep[si].items.length-1,list);
-    list.appendChild(row);
-    updateProgress();
-    setTimeout(()=>{ const inp=row.querySelector('input'); if(inp)inp.focus(); },40);
-    scheduleSync();
-  });
-  block.appendChild(ar);
-  return block;
-}
-function buildGearItem(item,si,ii){
-  const row=document.createElement('li'); row.className='gear-item-row';
-  const cb=document.createElement('div'); cb.className='gear-cb'+(item.checked?' checked':'');
-  cb.setAttribute('role','checkbox'); cb.setAttribute('aria-checked',item.checked);
-  const inp=document.createElement('input'); inp.className='gear-item-input'+(item.checked?' checked':'');
-  inp.value=item.text; inp.placeholder='物品或食材名稱';
-  cb.addEventListener('click',()=>{
-    state.prep[si].items[ii].checked=!state.prep[si].items[ii].checked;
-    cb.className='gear-cb'+(state.prep[si].items[ii].checked?' checked':'');
-    inp.className='gear-item-input'+(state.prep[si].items[ii].checked?' checked':'');
-    updateProgress(); scheduleSync();
-  });
-  inp.addEventListener('input',e=>{
-    if(state.prep[si]&&state.prep[si].items[ii]) state.prep[si].items[ii].text=e.target.value;
-    scheduleSync();
-  });
-  const db2=document.createElement('button'); db2.className='del-dish-btn'; db2.textContent='✕'; db2.setAttribute('aria-label','刪除');
-  db2.addEventListener('click',()=>{ state.prep[si].items.splice(ii,1); renderPrep(); scheduleSync(); });
-  row.appendChild(cb); row.appendChild(inp); row.appendChild(db2);
-  return row;
-}
-function addSection(){
-  state.prep.push({id:uid(),title:'',items:[{id:uid(),text:'',checked:false}]});
-  renderPrep(); scheduleSync();
-  setTimeout(()=>{ const ins=document.querySelectorAll('.gear-section-title'); if(ins.length)ins[ins.length-1].focus(); },40);
-}
-
-/* ── 複製 ── */
-function copyLine(){
-  collectMeta();
-  let text='🏕️ 露營菜單\n';
-  const s=state.meta.start, e=state.meta.end;
-  if(s&&e)text+=`📅 ${formatDate(s)} 至 ${formatDate(e)}`;
-  else if(s)text+=`📅 ${formatDate(s)}`;
-  if(state.meta.loc)text+=`　📍 ${state.meta.loc}`;
-  if(state.meta.ppl)text+=`　👥 ${state.meta.ppl}`;
-  text+='\n━━━━━━━━━━━━━━\n\n【菜單規劃】\n';
-  state.menu.forEach(day=>{
-    if(!day.label&&!day.meals.some(m=>m.time||m.dishes.some(d=>d.trim())))return;
-    text+=`\n▸ ${day.label||'（未命名）'}\n`;
-    day.meals.forEach(meal=>{
-      const dishes=meal.dishes.filter(d=>d.trim());
-      if(!meal.time&&!dishes.length)return;
-      text+=`  ${meal.time||'—'}：${dishes.join('、')||'（待填）'}\n`;
-    });
-  });
-  const hasPrep=state.prep.some(s=>s.items.some(i=>i.text.trim()));
-  if(hasPrep){
-    text+='\n━━━━━━━━━━━━━━\n\n【準備清單】\n';
-    state.prep.forEach(sec=>{
-      const items=sec.items.filter(i=>i.text.trim());
-      if(!items.length)return;
-      if(sec.title.trim())text+=`\n${sec.title}\n`;
-      items.forEach(i=>{ text+=`${i.checked?'☑':'□'} ${i.text}\n`; });
-    });
-  }
-  if(navigator.share){
-    navigator.share({title:'露營菜單',text}).then(()=>showToast('已分享 ✦'));
-  } else {
-    navigator.clipboard.writeText(text).then(()=>showToast('已複製！打開 LINE 貼上即可 ✦'));
-  }
-}
-
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; setTimeout(()=>{ t.textContent=''; },3000); }
-
-init();
-</script>
 </body>
 </html>
